@@ -9,7 +9,7 @@ def run_all_tests(
     *,
     input_testset_id: int,
     scoring_config_id: int,
-    model_invocation: typing.Callable[[typing.str], typing.Any],
+    model_invocation: typing.Callable[[str], typing.Any],
     api_key: typing.Optional[str] = os.getenv("SCORECARD_API_KEY")
 ) -> None: 
     """
