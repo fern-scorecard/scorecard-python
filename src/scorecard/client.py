@@ -5,11 +5,13 @@ import typing
 import httpx
 
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from .core.api_error import ApiError
 from .environment import ScorecardEnvironment
 from .resources.run.client import AsyncRunClient, RunClient
 from .resources.testcase.client import AsyncTestcaseClient, TestcaseClient
 from .resources.testrecord.client import AsyncTestrecordClient, TestrecordClient
 from .resources.testset.client import AsyncTestsetClient, TestsetClient
+from .types import RunStatus
 
 
 class Scorecard:
@@ -52,10 +54,15 @@ class Scorecard:
         run = self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
         )
-        self.run.update_status(run.id, status="running_execution")
+        if run.id is None: 
+            raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
+        self.run.update_status(run.id, status=RunStatus.RUNNING_EXECUTION)
         testcases = self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
+            if testcase.id is None: 
+                continue
+
             testcase_id = testcase.id
             query = testcase.user_query
 
@@ -74,7 +81,7 @@ class Scorecard:
                 response=response,
             )
 
-        self.run.update_status(run.id, status="completed")
+        self.run.update_status(run.id, status=RunStatus.COMPLETED)
 
         print("Finished running testcases.")
 
@@ -119,10 +126,16 @@ class AsyncScorecard:
         run = await self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
         )
-        await self.run.update_status(run.id, status="running_execution")
+        if run.id is None: 
+            raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
+        await self.run.update_status(
+            run.id, status=RunStatus.RUNNING_EXECUTION)
         testcases = await self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
+            if testcase.id is None: 
+                continue
+
             testcase_id = testcase.id
             query = testcase.user_query
 
@@ -141,7 +154,7 @@ class AsyncScorecard:
                 response=response,
             )
 
-        await self.run.update_status(run.id, status="completed")
+        await self.run.update_status(run.id, status=RunStatus.COMPLETED)
 
         print("Finished running testcases.")
 
