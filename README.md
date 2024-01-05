@@ -63,6 +63,28 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+## Running Tests
+The `run_tests` method will load your test cases, 
+invoke your models with saved prompts, and record success and failure. This is 
+available on both the sync and async client.  
+
+```python 
+from scorecard.client import Scorecard
+
+client = Scorecard(
+  api_key="YOUR_API_KEY"
+)
+
+client.run_tests(
+  # Your Testset ID 
+  input_testset_id=123,
+  # Your Scoring Config ID
+  scoring_config_id=456,
+  # The model invocation that you would like to test
+  model_invocation=lambda prompt: call_model(prompt),
+)
+```
+
 ## Timeouts
 By default, the client is configured to have a timeout of 60 seconds. You can customize this value at client instantiation. 
 
