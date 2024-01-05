@@ -1,4 +1,3 @@
-src/scorecard/run_all_tests.py
-src/scorecard/client.py
+# Add files that you don't want Fern to modify
 
 README.md

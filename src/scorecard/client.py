@@ -51,48 +51,6 @@ class Scorecard:
         self.run = RunClient(client_wrapper=self._client_wrapper)
         self.testrecord = TestrecordClient(client_wrapper=self._client_wrapper)
 
-    def run_tests(
-        self,
-        *,
-        input_testset_id: int,
-        scoring_config_id: int,
-        model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None: 
-        """
-        Runs all tests within a testset.
-
-        Parameters:
-            - input_testset_id: int. The ID of the Test Set you want to run.
-
-            - scoring_config_id: int. 
-
-            - model_invocation: typing.Callable[[typing.str], typing.Any].
-            A function that will call your AI model with a prompt.
-        """
-        run_id = self.run.create(
-            testset_id=input_testset_id, 
-            scoring_config_id=scoring_config_id
-        )
-        testcases = self.testset.get(input_testset_id)
-
-        for testcase in testcases:
-            testcase_id = testcase['id']
-            query = testcase['user_query']
-
-            print(f"Running testcase {testcase_id}...")
-            print(f"User query: {query}")
-
-            response = model_invocation(query)
-
-            self.testrecord.create(
-                run_id=run_id,
-                testcase_id=testcase_id,
-                model_response=response,
-            )
-
-        print("Finished running testcases...")
-
-
 class AsyncScorecard:
     def __init__(
         self,
@@ -129,47 +87,6 @@ class AsyncScorecard:
         self.testcase = AsyncTestcaseClient(client_wrapper=self._client_wrapper)
         self.run = AsyncRunClient(client_wrapper=self._client_wrapper)
         self.testrecord = AsyncTestrecordClient(client_wrapper=self._client_wrapper)
-    
-    async def run_tests(
-        self,
-        *,
-        input_testset_id: int,
-        scoring_config_id: int,
-        model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None: 
-        """
-        Runs all tests within a testset.
-
-        Parameters:
-            - input_testset_id: int. The ID of the Test Set you want to run.
-
-            - scoring_config_id: int. 
-
-            - model_invocation: typing.Callable[[typing.str], typing.Any].
-            A function that will call your AI model with a prompt.
-        """
-        run_id = await self.run.create(
-            testset_id=input_testset_id, 
-            scoring_config_id=scoring_config_id
-        )
-        testcases = await self.testset.get(input_testset_id)
-
-        for testcase in testcases:
-            testcase_id = testcase['id']
-            query = testcase['user_query']
-
-            print(f"Running testcase {testcase_id}...")
-            print(f"User query: {query}")
-
-            response = model_invocation(query)
-
-            await self.testrecord.create(
-                run_id=run_id,
-                testcase_id=testcase_id,
-                model_response=response,
-            )
-
-        print("Finished running testcases...")
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: ScorecardEnvironment) -> str:
