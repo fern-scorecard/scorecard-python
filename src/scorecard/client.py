@@ -5,11 +5,13 @@ import typing
 import httpx
 
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from .core.api_error import ApiError
 from .environment import ScorecardEnvironment
 from .resources.run.client import AsyncRunClient, RunClient
 from .resources.testcase.client import AsyncTestcaseClient, TestcaseClient
 from .resources.testrecord.client import AsyncTestrecordClient, TestrecordClient
 from .resources.testset.client import AsyncTestsetClient, TestsetClient
+from .types import RunStatus
 
 
 class Scorecard:
@@ -22,15 +24,83 @@ class Scorecard:
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
+        """
+        Instantiate the Scorecard SDK.
+
+        Parameters:
+            - base_url: typing.Optional[str]. Overrides the base_url used by the client
+
+            - environment: typing.Optional[ScorecardEnvironment]. Defaults to https://api.getscorecard.ai.
+
+            - api_key: typing.Optional[str]. Your Scorecard API Key. Defaults to the env variable SCORECARD_API_KEY. 
+
+            - timeout: typing.Optional[float]. Defaults to 60 seconds. 
+
+            - httpx_client: typing.Optional[httpx.Client]. Override the httpx client used by the sdk. 
+        """
+        if api_key is None: 
+            raise ApiError(
+                body="Please provide an api_key or set SCORECARD_API_KEY")
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             api_key=api_key,
-            httpx_client=httpx.Client(timeout=timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx.Client(timeout=timeout)
+            if httpx_client is None
+            else httpx_client,
         )
         self.testset = TestsetClient(client_wrapper=self._client_wrapper)
         self.testcase = TestcaseClient(client_wrapper=self._client_wrapper)
         self.testrecord = TestrecordClient(client_wrapper=self._client_wrapper)
         self.run = RunClient(client_wrapper=self._client_wrapper)
+
+    def run_tests(
+        self,
+        *,
+        input_testset_id: int,
+        scoring_config_id: int,
+        model_invocation: typing.Callable[[str], typing.Any],
+    ) -> None:
+        """
+        Runs all tests within a testset.
+        Parameters:
+            - input_testset_id: int. The ID of the Test Set you want to run.
+            - scoring_config_id: int.
+            - model_invocation: typing.Callable[[typing.str], typing.Any].
+            A function that will call your AI model with a prompt.
+        """
+        run = self.run.create(
+            testset_id=input_testset_id, scoring_config_id=scoring_config_id
+        )
+        if run.id is None: 
+            raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
+        self.run.update_status(run.id, status=RunStatus.RUNNING_EXECUTION)
+        testcases = self.testset.get_testcases(input_testset_id)
+
+        for testcase in testcases.results:
+            if testcase.id is None: 
+                continue
+
+            testcase_id = testcase.id
+            query = testcase.user_query
+
+            print(f"Running testcase {testcase_id}...")
+            print(f"User query: {query}")
+
+            response = model_invocation(query)
+
+            self.testrecord.create(
+                run_id=run.id,
+                testcase_id=testcase_id,
+                testset_id=input_testset_id,
+                user_query=testcase.user_query,
+                context=testcase.context,
+                ideal=testcase.ideal,
+                response=response,
+            )
+
+        self.run.update_status(run.id, status=RunStatus.COMPLETED)
+
+        print("Finished running testcases.")
 
 
 class AsyncScorecard:
@@ -43,21 +113,94 @@ class AsyncScorecard:
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
+        """
+        Instantiate the Scorecard SDK.
+
+        Parameters:
+            - base_url: typing.Optional[str]. Overrides the base_url used by the client
+
+            - environment: typing.Optional[ScorecardEnvironment]. Defaults to https://api.getscorecard.ai.
+
+            - api_key: typing.Optional[str]. Your Scorecard API Key. Defaults to the env variable SCORECARD_API_KEY. 
+
+            - timeout: typing.Optional[float]. Defaults to 60 seconds. 
+
+            - httpx_client: typing.Optional[httpx.Client]. Override the httpx client used by the sdk. 
+        """
+        if api_key is None: 
+            raise ApiError(
+                body="Please provide an api_key or set SCORECARD_API_KEY")
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             api_key=api_key,
-            httpx_client=httpx.AsyncClient(timeout=timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx.AsyncClient(timeout=timeout)
+            if httpx_client is None
+            else httpx_client,
         )
         self.testset = AsyncTestsetClient(client_wrapper=self._client_wrapper)
         self.testcase = AsyncTestcaseClient(client_wrapper=self._client_wrapper)
         self.testrecord = AsyncTestrecordClient(client_wrapper=self._client_wrapper)
         self.run = AsyncRunClient(client_wrapper=self._client_wrapper)
 
+    async def run_tests(
+        self,
+        *,
+        input_testset_id: int,
+        scoring_config_id: int,
+        model_invocation: typing.Callable[[str], typing.Any],
+    ) -> None:
+        """
+        Runs all tests within a testset.
+        Parameters:
+            - input_testset_id: int. The ID of the Test Set you want to run.
+            - scoring_config_id: int.
+            - model_invocation: typing.Callable[[typing.str], typing.Any].
+            A function that will call your AI model with a prompt.
+        """
+        run = await self.run.create(
+            testset_id=input_testset_id, scoring_config_id=scoring_config_id
+        )
+        if run.id is None: 
+            raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
+        await self.run.update_status(
+            run.id, status=RunStatus.RUNNING_EXECUTION)
+        testcases = await self.testset.get_testcases(input_testset_id)
 
-def _get_base_url(*, base_url: typing.Optional[str] = None, environment: ScorecardEnvironment) -> str:
+        for testcase in testcases.results:
+            if testcase.id is None: 
+                continue
+
+            testcase_id = testcase.id
+            query = testcase.user_query
+
+            print(f"Running testcase {testcase_id}...")
+            print(f"User query: {query}")
+
+            response = await model_invocation(query)
+
+            await self.testrecord.create(
+                run_id=run.id,
+                testcase_id=testcase_id,
+                testset_id=input_testset_id,
+                user_query=testcase.user_query,
+                context=testcase.context,
+                ideal=testcase.ideal,
+                response=response,
+            )
+
+        await self.run.update_status(run.id, status=RunStatus.COMPLETED)
+
+        print("Finished running testcases.")
+
+
+def _get_base_url(
+    *, base_url: typing.Optional[str] = None, environment: ScorecardEnvironment
+) -> str:
     if base_url is not None:
         return base_url
     elif environment is not None:
         return environment.value
     else:
-        raise Exception("Please pass in either base_url or environment to construct the client")
+        raise Exception(
+            "Please pass in either base_url or environment to construct the client"
+        )

@@ -3,4 +3,4 @@
 README.md
 
 # Add `run_tests` function
-src/client.py
+src/scorecard/client.py
