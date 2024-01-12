@@ -116,6 +116,7 @@ class TestsetClient:
         name: str,
         description: typing.Optional[str] = OMIT,
         using_retrieval: bool,
+        dummy: typing.Optional[bool] = OMIT,
         custom_schema: typing.Optional[CustomSchemaInput] = OMIT,
     ) -> Testset:
         """
@@ -128,11 +129,15 @@ class TestsetClient:
 
             - using_retrieval: bool.
 
+            - dummy: typing.Optional[bool].
+
             - custom_schema: typing.Optional[CustomSchemaInput].
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "using_retrieval": using_retrieval}
         if description is not OMIT:
             _request["description"] = description
+        if dummy is not OMIT:
+            _request["dummy"] = dummy
         if custom_schema is not OMIT:
             _request["custom_schema"] = custom_schema
         _response = self._client_wrapper.httpx_client.request(
@@ -319,6 +324,7 @@ class AsyncTestsetClient:
         name: str,
         description: typing.Optional[str] = OMIT,
         using_retrieval: bool,
+        dummy: typing.Optional[bool] = OMIT,
         custom_schema: typing.Optional[CustomSchemaInput] = OMIT,
     ) -> Testset:
         """
@@ -331,11 +337,15 @@ class AsyncTestsetClient:
 
             - using_retrieval: bool.
 
+            - dummy: typing.Optional[bool].
+
             - custom_schema: typing.Optional[CustomSchemaInput].
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "using_retrieval": using_retrieval}
         if description is not OMIT:
             _request["description"] = description
+        if dummy is not OMIT:
+            _request["dummy"] = dummy
         if custom_schema is not OMIT:
             _request["custom_schema"] = custom_schema
         _response = await self._client_wrapper.httpx_client.request(
