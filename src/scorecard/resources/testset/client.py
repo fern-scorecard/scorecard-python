@@ -29,7 +29,6 @@ except ImportError:
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
-
 class TestsetClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
@@ -46,7 +45,7 @@ class TestsetClient:
         client = Scorecard(
             api_key="YOUR_API_KEY",
         )
-        client.testset.get(
+        testset = client.testset.get(
             testset_id=1,
         )
         """
@@ -57,7 +56,9 @@ class TestsetClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            _parsed_response = pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            _parsed_response._set_client()
+            return _parsed_response
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
