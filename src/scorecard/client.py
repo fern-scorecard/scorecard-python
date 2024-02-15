@@ -37,7 +37,7 @@ class Scorecard:
             - timeout: typing.Optional[float]. Defaults to 60 seconds. 
 
             - httpx_client: typing.Optional[httpx.Client]. Override the httpx client used by the sdk. 
-        """
+        """Returns a `Run` object representing the test run that was executed.
         if api_key is None: 
             raise ApiError(
                 body="Please provide an api_key or set SCORECARD_API_KEY")
@@ -59,7 +59,7 @@ class Scorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> Run:
         """
         Runs all tests within a testset.
         Parameters:
@@ -73,7 +73,8 @@ class Scorecard:
         )
         if run.id is None: 
             raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
-        self.run.update_status(run.id, status=RunStatus.RUNNING_EXECUTION)
+        self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        return run
         testcases = self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
@@ -126,7 +127,7 @@ class AsyncScorecard:
             - timeout: typing.Optional[float]. Defaults to 60 seconds. 
 
             - httpx_client: typing.Optional[httpx.Client]. Override the httpx client used by the sdk. 
-        """
+        """Returns a `Run` object representing the test run that was executed.
         if api_key is None: 
             raise ApiError(
                 body="Please provide an api_key or set SCORECARD_API_KEY")
@@ -148,7 +149,7 @@ class AsyncScorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> Run:
         """
         Runs all tests within a testset.
         Parameters:
@@ -162,7 +163,8 @@ class AsyncScorecard:
         )
         if run.id is None: 
             raise ApiError(body=f"Didn't receive run id after creating run for testid={input_testset_id}")
-        await self.run.update_status(
+        await self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        return run
             run.id, status=RunStatus.RUNNING_EXECUTION)
         testcases = await self.testset.get_testcases(input_testset_id)
 
