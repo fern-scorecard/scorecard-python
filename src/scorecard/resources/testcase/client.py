@@ -57,6 +57,16 @@ class TestcaseClient:
             - custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomInputsValue]]].
 
             - custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomLabelsValue]]].
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.create(
+            testset_id=1,
+            user_query="user_query",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {"user_query": user_query}
         if context is not OMIT:
@@ -98,6 +108,16 @@ class TestcaseClient:
             - testcase_id: int.
 
             - testset_id: int.
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.get(
+            testcase_id=1,
+            testset_id=1,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
@@ -131,6 +151,16 @@ class TestcaseClient:
             - testcase_id: int.
 
             - testset_id: int.
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.delete(
+            testcase_id=1,
+            testset_id=1,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
@@ -186,6 +216,16 @@ class AsyncTestcaseClient:
             - custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomInputsValue]]].
 
             - custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomLabelsValue]]].
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testcase.create(
+            testset_id=1,
+            user_query="user_query",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {"user_query": user_query}
         if context is not OMIT:
@@ -227,6 +267,16 @@ class AsyncTestcaseClient:
             - testcase_id: int.
 
             - testset_id: int.
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testcase.get(
+            testcase_id=1,
+            testset_id=1,
+        )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
@@ -260,6 +310,16 @@ class AsyncTestcaseClient:
             - testcase_id: int.
 
             - testset_id: int.
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testcase.delete(
+            testcase_id=1,
+            testset_id=1,
+        )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",

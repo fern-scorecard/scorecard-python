@@ -12,7 +12,7 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class CustomSchemaInput(pydantic.BaseModel):
+class CustomSchema(pydantic.BaseModel):
     """
     Custom schema model with an ordered list of custom variables.
     """

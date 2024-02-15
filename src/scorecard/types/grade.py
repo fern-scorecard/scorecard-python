@@ -4,7 +4,6 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from .custom_variable import CustomVariable
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -12,14 +11,16 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class CustomSchemaOutput(pydantic.BaseModel):
-    """
-    Custom schema model with an ordered list of custom variables.
-    """
-
-    variables: typing.Optional[typing.List[CustomVariable]] = pydantic.Field(
-        description="Ordered list of custom variables"
-    )
+class Grade(pydantic.BaseModel):
+    id: typing.Optional[int]
+    run_id: typing.Optional[int]
+    testcase_id: typing.Optional[int]
+    testrecord_id: typing.Optional[int]
+    metric_id: typing.Optional[int]
+    binary_score: typing.Optional[bool]
+    int_score: typing.Optional[int]
+    reasoning: typing.Optional[str]
+    human_eval: typing.Optional[bool]
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -4,10 +4,14 @@ from .types import (
     TestrecordCreateParamsCustomInputsValue,
     TestrecordCreateParamsCustomLabelsValue,
     TestrecordCreateParamsCustomOutputsValue,
+    TestrecordCreateParamsModelDebugInfoValue,
+    TestrecordCreateParamsModelParamsValue,
 )
 
 __all__ = [
     "TestrecordCreateParamsCustomInputsValue",
     "TestrecordCreateParamsCustomLabelsValue",
     "TestrecordCreateParamsCustomOutputsValue",
+    "TestrecordCreateParamsModelDebugInfoValue",
+    "TestrecordCreateParamsModelParamsValue",
 ]
