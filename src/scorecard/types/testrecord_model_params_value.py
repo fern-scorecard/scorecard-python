@@ -2,4 +2,4 @@
 
 import typing
 
-LibDtoTypesTestRecordCreate = typing.Any
+TestrecordModelParamsValue = typing.Union[int, float, str]

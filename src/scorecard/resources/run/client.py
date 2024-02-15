@@ -34,30 +34,59 @@ class RunClient:
     def create(
         self,
         *,
-        testset_id: int,
+        testset_id: typing.Optional[int] = OMIT,
         scoring_config_id: typing.Optional[int] = OMIT,
         status: typing.Optional[str] = OMIT,
         model_params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        source: typing.Optional[str] = OMIT,
+        notes: typing.Optional[str] = OMIT,
+        prompt_template: typing.Optional[str] = OMIT,
     ) -> RunExternal:
         """
         Create a new Run
 
         Parameters:
-            - testset_id: int.
+            - testset_id: typing.Optional[int].
 
             - scoring_config_id: typing.Optional[int].
 
             - status: typing.Optional[str].
 
             - model_params: typing.Optional[typing.Dict[str, typing.Any]].
+
+            - source: typing.Optional[str].
+
+            - notes: typing.Optional[str].
+
+            - prompt_template: typing.Optional[str].
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.run.create(
+            testset_id=1,
+            scoring_config_id=2,
+            status="RUNNING_EXECUTION",
+            model_params={"param1": "value1", "param2": "value2"},
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {"testset_id": testset_id}
+        _request: typing.Dict[str, typing.Any] = {}
+        if testset_id is not OMIT:
+            _request["testset_id"] = testset_id
         if scoring_config_id is not OMIT:
             _request["scoring_config_id"] = scoring_config_id
         if status is not OMIT:
             _request["status"] = status
         if model_params is not OMIT:
             _request["model_params"] = model_params
+        if source is not OMIT:
+            _request["source"] = source
+        if notes is not OMIT:
+            _request["notes"] = notes
+        if prompt_template is not OMIT:
+            _request["prompt_template"] = prompt_template
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),
@@ -170,30 +199,59 @@ class AsyncRunClient:
     async def create(
         self,
         *,
-        testset_id: int,
+        testset_id: typing.Optional[int] = OMIT,
         scoring_config_id: typing.Optional[int] = OMIT,
         status: typing.Optional[str] = OMIT,
         model_params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        source: typing.Optional[str] = OMIT,
+        notes: typing.Optional[str] = OMIT,
+        prompt_template: typing.Optional[str] = OMIT,
     ) -> RunExternal:
         """
         Create a new Run
 
         Parameters:
-            - testset_id: int.
+            - testset_id: typing.Optional[int].
 
             - scoring_config_id: typing.Optional[int].
 
             - status: typing.Optional[str].
 
             - model_params: typing.Optional[typing.Dict[str, typing.Any]].
+
+            - source: typing.Optional[str].
+
+            - notes: typing.Optional[str].
+
+            - prompt_template: typing.Optional[str].
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.run.create(
+            testset_id=1,
+            scoring_config_id=2,
+            status="RUNNING_EXECUTION",
+            model_params={"param1": "value1", "param2": "value2"},
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {"testset_id": testset_id}
+        _request: typing.Dict[str, typing.Any] = {}
+        if testset_id is not OMIT:
+            _request["testset_id"] = testset_id
         if scoring_config_id is not OMIT:
             _request["scoring_config_id"] = scoring_config_id
         if status is not OMIT:
             _request["status"] = status
         if model_params is not OMIT:
             _request["model_params"] = model_params
+        if source is not OMIT:
+            _request["source"] = source
+        if notes is not OMIT:
+            _request["notes"] = notes
+        if prompt_template is not OMIT:
+            _request["prompt_template"] = prompt_template
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),

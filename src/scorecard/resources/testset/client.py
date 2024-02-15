@@ -12,8 +12,7 @@ from ...errors.forbidden_error import ForbiddenError
 from ...errors.not_found_error import NotFoundError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
-from ...types.custom_schema_input import CustomSchemaInput
-from ...types.custom_schema_output import CustomSchemaOutput
+from ...types.custom_schema import CustomSchema
 from ...types.http_validation_error import HttpValidationError
 from ...types.not_found_error_body import NotFoundErrorBody
 from ...types.paginated_testcase_response import PaginatedTestcaseResponse
@@ -36,7 +35,7 @@ class TestsetClient:
 
     def get(self, testset_id: int) -> Testset:
         """
-        Retrieve Testset metadata without Testcase data.
+        Retrieve Testset metadata without Testcase data
 
         Parameters:
             - testset_id: int.
@@ -115,8 +114,8 @@ class TestsetClient:
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
-        using_retrieval: bool,
-        custom_schema: typing.Optional[CustomSchemaInput] = OMIT,
+        using_retrieval: typing.Optional[bool] = OMIT,
+        custom_schema: typing.Optional[CustomSchema] = OMIT,
     ) -> Testset:
         """
         Create a new Testset
@@ -126,13 +125,24 @@ class TestsetClient:
 
             - description: typing.Optional[str].
 
-            - using_retrieval: bool.
+            - using_retrieval: typing.Optional[bool].
 
-            - custom_schema: typing.Optional[CustomSchemaInput].
+            - custom_schema: typing.Optional[CustomSchema].
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testset.create(
+            name="name",
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "using_retrieval": using_retrieval}
+        _request: typing.Dict[str, typing.Any] = {"name": name}
         if description is not OMIT:
             _request["description"] = description
+        if using_retrieval is not OMIT:
+            _request["using_retrieval"] = using_retrieval
         if custom_schema is not OMIT:
             _request["custom_schema"] = custom_schema
         _response = self._client_wrapper.httpx_client.request(
@@ -158,9 +168,9 @@ class TestsetClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_schema(self, testset_id: int) -> CustomSchemaOutput:
+    def read_schema(self, testset_id: int) -> CustomSchema:
         """
-        Read the schema of a Testset.
+        Read the schema of a Testset
 
         Parameters:
             - testset_id: int.
@@ -170,7 +180,7 @@ class TestsetClient:
         client = Scorecard(
             api_key="YOUR_API_KEY",
         )
-        client.testset.get_schema(
+        client.testset.read_schema(
             testset_id=1,
         )
         """
@@ -181,7 +191,7 @@ class TestsetClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(CustomSchemaOutput, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CustomSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -197,7 +207,7 @@ class TestsetClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_testcases(
-        self, testset_id: int, *, page: typing.Optional[int] = None, page_size: typing.Optional[int] = None
+        self, testset_id: int, *, offset: typing.Optional[int] = None, limit: typing.Optional[int] = None
     ) -> PaginatedTestcaseResponse:
         """
         Retrieve all Testcases from a Testset
@@ -205,14 +215,23 @@ class TestsetClient:
         Parameters:
             - testset_id: int.
 
-            - page: typing.Optional[int].
+            - offset: typing.Optional[int].
 
-            - page_size: typing.Optional[int].
+            - limit: typing.Optional[int].
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testset.get_testcases(
+            testset_id=1,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/testcase"),
-            params=remove_none_from_dict({"page": page, "page_size": page_size}),
+            params=remove_none_from_dict({"offset": offset, "limit": limit}),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
@@ -239,7 +258,7 @@ class AsyncTestsetClient:
 
     async def get(self, testset_id: int) -> Testset:
         """
-        Retrieve Testset metadata without Testcase data.
+        Retrieve Testset metadata without Testcase data
 
         Parameters:
             - testset_id: int.
@@ -318,8 +337,8 @@ class AsyncTestsetClient:
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
-        using_retrieval: bool,
-        custom_schema: typing.Optional[CustomSchemaInput] = OMIT,
+        using_retrieval: typing.Optional[bool] = OMIT,
+        custom_schema: typing.Optional[CustomSchema] = OMIT,
     ) -> Testset:
         """
         Create a new Testset
@@ -329,13 +348,24 @@ class AsyncTestsetClient:
 
             - description: typing.Optional[str].
 
-            - using_retrieval: bool.
+            - using_retrieval: typing.Optional[bool].
 
-            - custom_schema: typing.Optional[CustomSchemaInput].
+            - custom_schema: typing.Optional[CustomSchema].
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testset.create(
+            name="name",
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "using_retrieval": using_retrieval}
+        _request: typing.Dict[str, typing.Any] = {"name": name}
         if description is not OMIT:
             _request["description"] = description
+        if using_retrieval is not OMIT:
+            _request["using_retrieval"] = using_retrieval
         if custom_schema is not OMIT:
             _request["custom_schema"] = custom_schema
         _response = await self._client_wrapper.httpx_client.request(
@@ -361,9 +391,9 @@ class AsyncTestsetClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_schema(self, testset_id: int) -> CustomSchemaOutput:
+    async def read_schema(self, testset_id: int) -> CustomSchema:
         """
-        Read the schema of a Testset.
+        Read the schema of a Testset
 
         Parameters:
             - testset_id: int.
@@ -373,7 +403,7 @@ class AsyncTestsetClient:
         client = AsyncScorecard(
             api_key="YOUR_API_KEY",
         )
-        await client.testset.get_schema(
+        await client.testset.read_schema(
             testset_id=1,
         )
         """
@@ -384,7 +414,7 @@ class AsyncTestsetClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(CustomSchemaOutput, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CustomSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -400,7 +430,7 @@ class AsyncTestsetClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_testcases(
-        self, testset_id: int, *, page: typing.Optional[int] = None, page_size: typing.Optional[int] = None
+        self, testset_id: int, *, offset: typing.Optional[int] = None, limit: typing.Optional[int] = None
     ) -> PaginatedTestcaseResponse:
         """
         Retrieve all Testcases from a Testset
@@ -408,14 +438,23 @@ class AsyncTestsetClient:
         Parameters:
             - testset_id: int.
 
-            - page: typing.Optional[int].
+            - offset: typing.Optional[int].
 
-            - page_size: typing.Optional[int].
+            - limit: typing.Optional[int].
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testset.get_testcases(
+            testset_id=1,
+        )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/testcase"),
-            params=remove_none_from_dict({"page": page, "page_size": page_size}),
+            params=remove_none_from_dict({"offset": offset, "limit": limit}),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
