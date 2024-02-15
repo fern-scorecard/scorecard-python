@@ -3,18 +3,15 @@
 from .app_create_run_params import AppCreateRunParams
 from .app_test_record_create import AppTestRecordCreate
 from .app_test_set_create import AppTestSetCreate
-from .body_start_github_workflow_start_github_workflow_post import BodyStartGithubWorkflowStartGithubWorkflowPost
+from .create_github_workflow_params import CreateGithubWorkflowParams
 from .create_run_params import CreateRunParams
-from .custom_schema_input import CustomSchemaInput
-from .custom_schema_output import CustomSchemaOutput
+from .custom_schema import CustomSchema
 from .custom_variable import CustomVariable
 from .data_type_enum import DataTypeEnum
 from .execution_params import ExecutionParams
 from .file_url import FileUrl
+from .grade import Grade
 from .http_validation_error import HttpValidationError
-from .lib_dto_types_create_run_params import LibDtoTypesCreateRunParams
-from .lib_dto_types_test_record_create import LibDtoTypesTestRecordCreate
-from .lib_dto_types_test_set_create import LibDtoTypesTestSetCreate
 from .model_params import ModelParams
 from .not_found_error_body import NotFoundErrorBody
 from .paginated_testcase_response import PaginatedTestcaseResponse
@@ -34,6 +31,8 @@ from .testrecord import Testrecord
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
 from .testrecord_custom_labels_value import TestrecordCustomLabelsValue
 from .testrecord_custom_outputs_value import TestrecordCustomOutputsValue
+from .testrecord_model_debug_info_value import TestrecordModelDebugInfoValue
+from .testrecord_model_params_value import TestrecordModelParamsValue
 from .testset import Testset
 from .unauthenticated_error import UnauthenticatedError
 from .unauthorized_error_body import UnauthorizedErrorBody
@@ -44,18 +43,15 @@ __all__ = [
     "AppCreateRunParams",
     "AppTestRecordCreate",
     "AppTestSetCreate",
-    "BodyStartGithubWorkflowStartGithubWorkflowPost",
+    "CreateGithubWorkflowParams",
     "CreateRunParams",
-    "CustomSchemaInput",
-    "CustomSchemaOutput",
+    "CustomSchema",
     "CustomVariable",
     "DataTypeEnum",
     "ExecutionParams",
     "FileUrl",
+    "Grade",
     "HttpValidationError",
-    "LibDtoTypesCreateRunParams",
-    "LibDtoTypesTestRecordCreate",
-    "LibDtoTypesTestSetCreate",
     "ModelParams",
     "NotFoundErrorBody",
     "PaginatedTestcaseResponse",
@@ -75,6 +71,8 @@ __all__ = [
     "TestrecordCustomInputsValue",
     "TestrecordCustomLabelsValue",
     "TestrecordCustomOutputsValue",
+    "TestrecordModelDebugInfoValue",
+    "TestrecordModelParamsValue",
     "Testset",
     "UnauthenticatedError",
     "UnauthorizedErrorBody",

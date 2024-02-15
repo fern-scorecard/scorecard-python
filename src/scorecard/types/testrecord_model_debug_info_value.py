@@ -2,4 +2,4 @@
 
 import typing
 
-TestRecordCreate = typing.Any
+TestrecordModelDebugInfoValue = typing.Union[int, float, str]
