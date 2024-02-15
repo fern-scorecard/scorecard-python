@@ -157,6 +157,9 @@ class AsyncScorecard:
             - scoring_config_id: int.
             - model_invocation: typing.Callable[[typing.str], typing.Any].
             A function that will call your AI model with a prompt.
+        
+        Returns:
+            - Returns a `Run` object representing the test run that was executed.
         """
         run = await self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
@@ -166,7 +169,6 @@ class AsyncScorecard:
         await self.run.update_status(run.id, status=RunStatus.COMPLETED)
         return run
             run.id, status=RunStatus.RUNNING_EXECUTION)
-        testcases = await self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
             if testcase.id is None: 
