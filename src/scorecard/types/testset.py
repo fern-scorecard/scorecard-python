@@ -4,7 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from .custom_schema_output import CustomSchemaOutput
+from .custom_schema import CustomSchema
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -24,7 +24,7 @@ class Testset(pydantic.BaseModel):
     updated_at: typing.Optional[dt.datetime]
     is_archived: typing.Optional[bool]
     project_id: typing.Optional[int]
-    custom_schema: typing.Optional[CustomSchemaOutput]
+    custom_schema: typing.Optional[CustomSchema]
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

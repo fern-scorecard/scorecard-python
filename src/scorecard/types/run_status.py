@@ -12,6 +12,7 @@ class RunStatus(str, enum.Enum):
     RUNNING_EXECUTION = "running_execution"
     AWAITING_SCORING = "awaiting_scoring"
     RUNNING_SCORING = "running_scoring"
+    AWAITING_HUMAN_SCORING = "awaiting_human_scoring"
     COMPLETED = "completed"
 
     def visit(
@@ -21,6 +22,7 @@ class RunStatus(str, enum.Enum):
         running_execution: typing.Callable[[], T_Result],
         awaiting_scoring: typing.Callable[[], T_Result],
         running_scoring: typing.Callable[[], T_Result],
+        awaiting_human_scoring: typing.Callable[[], T_Result],
         completed: typing.Callable[[], T_Result],
     ) -> T_Result:
         if self is RunStatus.PENDING:
@@ -33,5 +35,7 @@ class RunStatus(str, enum.Enum):
             return awaiting_scoring()
         if self is RunStatus.RUNNING_SCORING:
             return running_scoring()
+        if self is RunStatus.AWAITING_HUMAN_SCORING:
+            return awaiting_human_scoring()
         if self is RunStatus.COMPLETED:
             return completed()

@@ -2,4 +2,4 @@
 
 import typing
 
-BodyStartGithubWorkflowStartGithubWorkflowPost = typing.Any
+TestrecordCreateParamsModelDebugInfoValue = typing.Union[int, float, str]

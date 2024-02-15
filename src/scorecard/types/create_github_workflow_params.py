@@ -2,4 +2,4 @@
 
 import typing
 
-LibDtoTypesCreateRunParams = typing.Any
+CreateGithubWorkflowParams = typing.Any

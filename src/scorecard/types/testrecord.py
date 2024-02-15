@@ -7,6 +7,8 @@ from ..core.datetime_utils import serialize_datetime
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
 from .testrecord_custom_labels_value import TestrecordCustomLabelsValue
 from .testrecord_custom_outputs_value import TestrecordCustomOutputsValue
+from .testrecord_model_debug_info_value import TestrecordModelDebugInfoValue
+from .testrecord_model_params_value import TestrecordModelParamsValue
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -18,8 +20,9 @@ class Testrecord(pydantic.BaseModel):
     id: typing.Optional[int]
     created_at: typing.Optional[dt.datetime]
     run_id: int
-    testset_id: int
-    user_query: str
+    testset_id: typing.Optional[int]
+    testcase_id: typing.Optional[int]
+    user_query: typing.Optional[str]
     context: typing.Optional[str]
     model_response: typing.Optional[str]
     ideal: typing.Optional[str]
@@ -27,6 +30,10 @@ class Testrecord(pydantic.BaseModel):
     custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomInputsValue]]]
     custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomLabelsValue]]]
     custom_outputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomOutputsValue]]]
+    status: typing.Optional[str]
+    prompt: typing.Optional[str]
+    model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordModelParamsValue]]]
+    model_debug_info: typing.Optional[typing.Dict[str, typing.Optional[TestrecordModelDebugInfoValue]]]
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -19,6 +19,8 @@ from ...types.unauthorized_error_body import UnauthorizedErrorBody
 from .types.testrecord_create_params_custom_inputs_value import TestrecordCreateParamsCustomInputsValue
 from .types.testrecord_create_params_custom_labels_value import TestrecordCreateParamsCustomLabelsValue
 from .types.testrecord_create_params_custom_outputs_value import TestrecordCreateParamsCustomOutputsValue
+from .types.testrecord_create_params_model_debug_info_value import TestrecordCreateParamsModelDebugInfoValue
+from .types.testrecord_create_params_model_params_value import TestrecordCreateParamsModelParamsValue
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -41,6 +43,16 @@ class TestrecordClient:
             - testrecord_id: int.
 
             - run_id: int.
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testrecord.get(
+            testrecord_id=1,
+            run_id=1,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
@@ -70,9 +82,9 @@ class TestrecordClient:
         self,
         run_id: int,
         *,
-        testset_id: int,
-        testcase_id: int,
-        user_query: str,
+        testset_id: typing.Optional[int] = OMIT,
+        testcase_id: typing.Optional[int] = OMIT,
+        user_query: typing.Optional[str] = OMIT,
         context: typing.Optional[str] = OMIT,
         response: typing.Optional[str] = OMIT,
         ideal: typing.Optional[str] = OMIT,
@@ -85,6 +97,11 @@ class TestrecordClient:
         custom_labels: typing.Optional[
             typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]
         ] = OMIT,
+        prompt: typing.Optional[str] = OMIT,
+        model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]] = OMIT,
+        model_debug_info: typing.Optional[
+            typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]
+        ] = OMIT,
     ) -> Testrecord:
         """
         Create a new Testrecord
@@ -92,11 +109,11 @@ class TestrecordClient:
         Parameters:
             - run_id: int.
 
-            - testset_id: int.
+            - testset_id: typing.Optional[int].
 
-            - testcase_id: int.
+            - testcase_id: typing.Optional[int].
 
-            - user_query: str.
+            - user_query: typing.Optional[str].
 
             - context: typing.Optional[str].
 
@@ -109,12 +126,29 @@ class TestrecordClient:
             - custom_outputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]].
 
             - custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]].
+
+            - prompt: typing.Optional[str].
+
+            - model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]].
+
+            - model_debug_info: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]].
+        ---
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testrecord.create(
+            run_id=1,
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "testset_id": testset_id,
-            "testcase_id": testcase_id,
-            "user_query": user_query,
-        }
+        _request: typing.Dict[str, typing.Any] = {}
+        if testset_id is not OMIT:
+            _request["testset_id"] = testset_id
+        if testcase_id is not OMIT:
+            _request["testcase_id"] = testcase_id
+        if user_query is not OMIT:
+            _request["user_query"] = user_query
         if context is not OMIT:
             _request["context"] = context
         if response is not OMIT:
@@ -127,6 +161,12 @@ class TestrecordClient:
             _request["custom_outputs"] = custom_outputs
         if custom_labels is not OMIT:
             _request["custom_labels"] = custom_labels
+        if prompt is not OMIT:
+            _request["prompt"] = prompt
+        if model_params is not OMIT:
+            _request["model_params"] = model_params
+        if model_debug_info is not OMIT:
+            _request["model_debug_info"] = model_debug_info
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/run/{run_id}/testrecord"),
@@ -163,6 +203,16 @@ class AsyncTestrecordClient:
             - testrecord_id: int.
 
             - run_id: int.
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testrecord.get(
+            testrecord_id=1,
+            run_id=1,
+        )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
@@ -192,9 +242,9 @@ class AsyncTestrecordClient:
         self,
         run_id: int,
         *,
-        testset_id: int,
-        testcase_id: int,
-        user_query: str,
+        testset_id: typing.Optional[int] = OMIT,
+        testcase_id: typing.Optional[int] = OMIT,
+        user_query: typing.Optional[str] = OMIT,
         context: typing.Optional[str] = OMIT,
         response: typing.Optional[str] = OMIT,
         ideal: typing.Optional[str] = OMIT,
@@ -207,6 +257,11 @@ class AsyncTestrecordClient:
         custom_labels: typing.Optional[
             typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]
         ] = OMIT,
+        prompt: typing.Optional[str] = OMIT,
+        model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]] = OMIT,
+        model_debug_info: typing.Optional[
+            typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]
+        ] = OMIT,
     ) -> Testrecord:
         """
         Create a new Testrecord
@@ -214,11 +269,11 @@ class AsyncTestrecordClient:
         Parameters:
             - run_id: int.
 
-            - testset_id: int.
+            - testset_id: typing.Optional[int].
 
-            - testcase_id: int.
+            - testcase_id: typing.Optional[int].
 
-            - user_query: str.
+            - user_query: typing.Optional[str].
 
             - context: typing.Optional[str].
 
@@ -231,12 +286,29 @@ class AsyncTestrecordClient:
             - custom_outputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]].
 
             - custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]].
+
+            - prompt: typing.Optional[str].
+
+            - model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]].
+
+            - model_debug_info: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]].
+        ---
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.testrecord.create(
+            run_id=1,
+        )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "testset_id": testset_id,
-            "testcase_id": testcase_id,
-            "user_query": user_query,
-        }
+        _request: typing.Dict[str, typing.Any] = {}
+        if testset_id is not OMIT:
+            _request["testset_id"] = testset_id
+        if testcase_id is not OMIT:
+            _request["testcase_id"] = testcase_id
+        if user_query is not OMIT:
+            _request["user_query"] = user_query
         if context is not OMIT:
             _request["context"] = context
         if response is not OMIT:
@@ -249,6 +321,12 @@ class AsyncTestrecordClient:
             _request["custom_outputs"] = custom_outputs
         if custom_labels is not OMIT:
             _request["custom_labels"] = custom_labels
+        if prompt is not OMIT:
+            _request["prompt"] = prompt
+        if model_params is not OMIT:
+            _request["model_params"] = model_params
+        if model_debug_info is not OMIT:
+            _request["model_debug_info"] = model_debug_info
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/run/{run_id}/testrecord"),
