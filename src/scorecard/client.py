@@ -68,6 +68,8 @@ class Scorecard:
             - scoring_config_id: int.
             - model_invocation: typing.Callable[[typing.str], typing.Any].
             A function that will call your AI model with a prompt.
+        Returns:
+            - RunExternal: an object representing the test run that was executed.
         """
         run = self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
@@ -159,6 +161,8 @@ class AsyncScorecard:
             - scoring_config_id: int.
             - model_invocation: typing.Callable[[typing.str], typing.Any].
             A function that will call your AI model with a prompt.
+        Returns:
+            - RunExternal: an object representing the test run that was executed.
         """
         run = await self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
