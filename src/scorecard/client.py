@@ -12,6 +12,7 @@ from .resources.testcase.client import AsyncTestcaseClient, TestcaseClient
 from .resources.testrecord.client import AsyncTestrecordClient, TestrecordClient
 from .resources.testset.client import AsyncTestsetClient, TestsetClient
 from .types import RunStatus
+from .types import RunExternal
 
 
 class Scorecard:
@@ -59,7 +60,7 @@ class Scorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> RunExternal:
         """
         Runs all tests within a testset.
         Parameters:
@@ -67,6 +68,8 @@ class Scorecard:
             - scoring_config_id: int.
             - model_invocation: typing.Callable[[typing.str], typing.Any].
             A function that will call your AI model with a prompt.
+        Returns:
+            - RunExternal: an object representing the test run that was executed.
         """
         run = self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
@@ -98,9 +101,11 @@ class Scorecard:
                 response=response,
             )
 
-        self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
+        print(f"You can view the run details at https://app.getscorecard.ai/view-records/{run.id}")
+        return run 
 
 
 class AsyncScorecard:
@@ -148,7 +153,7 @@ class AsyncScorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> RunExternal:
         """
         Runs all tests within a testset.
         Parameters:
@@ -156,6 +161,8 @@ class AsyncScorecard:
             - scoring_config_id: int.
             - model_invocation: typing.Callable[[typing.str], typing.Any].
             A function that will call your AI model with a prompt.
+        Returns:
+            - RunExternal: an object representing the test run that was executed.
         """
         run = await self.run.create(
             testset_id=input_testset_id, scoring_config_id=scoring_config_id
@@ -188,9 +195,11 @@ class AsyncScorecard:
                 response=response,
             )
 
-        await self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        await self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
+        print(f"You can view the run details at https://app.getscorecard.ai/view-records/{run.id}")
+        return run
 
 
 def _get_base_url(
