@@ -59,7 +59,7 @@ class Scorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> int:
         """
         Runs all tests within a testset.
         Parameters:
@@ -101,6 +101,7 @@ class Scorecard:
         self.run.update_status(run.id, status=RunStatus.COMPLETED)
 
         print("Finished running testcases.")
+        return run.id 
 
 
 class AsyncScorecard:
