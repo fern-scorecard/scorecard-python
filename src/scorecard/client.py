@@ -98,7 +98,7 @@ class Scorecard:
                 response=response,
             )
 
-        self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
         return run.id 
@@ -149,7 +149,7 @@ class AsyncScorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> None:
+    ) -> int:
         """
         Runs all tests within a testset.
         Parameters:
@@ -189,9 +189,10 @@ class AsyncScorecard:
                 response=response,
             )
 
-        await self.run.update_status(run.id, status=RunStatus.COMPLETED)
+        await self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
+        return run.id
 
 
 def _get_base_url(
