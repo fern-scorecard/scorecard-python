@@ -12,6 +12,7 @@ from .resources.testcase.client import AsyncTestcaseClient, TestcaseClient
 from .resources.testrecord.client import AsyncTestrecordClient, TestrecordClient
 from .resources.testset.client import AsyncTestsetClient, TestsetClient
 from .types import RunStatus
+from .types import RunExternal
 
 
 class Scorecard:
@@ -59,7 +60,7 @@ class Scorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> int:
+    ) -> RunExternal:
         """
         Runs all tests within a testset.
         Parameters:
@@ -101,7 +102,8 @@ class Scorecard:
         self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
-        return run.id 
+        print(f"You can view the run details at https://app.getscorecard.ai/view-records/{run.id}")
+        return run 
 
 
 class AsyncScorecard:
@@ -149,7 +151,7 @@ class AsyncScorecard:
         input_testset_id: int,
         scoring_config_id: int,
         model_invocation: typing.Callable[[str], typing.Any],
-    ) -> int:
+    ) -> RunExternal:
         """
         Runs all tests within a testset.
         Parameters:
@@ -192,7 +194,8 @@ class AsyncScorecard:
         await self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
 
         print("Finished running testcases.")
-        return run.id
+        print(f"You can view the run details at https://app.getscorecard.ai/view-records/{run.id}")
+        return run
 
 
 def _get_base_url(
