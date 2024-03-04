@@ -113,7 +113,7 @@ class LogRecord(BaseSchema):
     output: Output
     session: int
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def execution_time(self) -> SerializableTimeDelta:
         return self.end_time - self.start_time
