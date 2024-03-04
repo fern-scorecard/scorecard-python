@@ -4,3 +4,6 @@ README.md
 
 # Add `run_tests` function
 src/scorecard/client.py
+
+# All all of the files in the tracer directory
+src/tracer/

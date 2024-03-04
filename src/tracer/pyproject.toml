@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "tracer"
+version = "0.1.0"
+description = "demo for scorecard tracer in python"
+authors = ["Meji Abidoye <pfbyjy@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.6.1"
+openai = "^1.11.1"
+pydantic-settings = "^2.1.0"
+supabase = "^2.3.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
