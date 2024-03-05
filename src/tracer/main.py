@@ -1,18 +1,27 @@
+# mypy: ignore-errors
+# this file is not a part of the sdk and has only been used
+# during development for testing. Committing it as is for now,
+# but this file will be removed before the sdk is released.
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Union
 
-from tracer import scorecard_function_tracer, scorecard_tracer, ScorecardSessionManager, RunContextManager
+from tracer import (
+    scorecard_function_tracer,
+    scorecard_tracer,
+    ScorecardSessionManager,
+    RunContextManager,
+)
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='.env',
-        env_file_encoding='utf-8',
-        env_prefix='OPENAI_')
+        env_file=".env", env_file_encoding="utf-8", env_prefix="OPENAI_"
+    )
 
-    api_key: str = ''
+    api_key: str = ""
 
 
 settings = Settings()
@@ -70,17 +79,18 @@ def call_llm_and_sum_of_squares(a: int, b: int) -> ChatCompletion:
     prompt = f"confirm if the sum of squares of {a} and {b} is {sum_of_squares(a, b)}."
     return prompt_llm(prompt)
 
-# session
-if __name__ == '__main__':
 
-    # with ScorecardSessionManager(test_set_prefix="create_live_test_set", 
+# session
+if __name__ == "__main__":
+
+    # with ScorecardSessionManager(test_set_prefix="create_live_test_set",
     #                              tags={'type': 'production'},
     #                              create_test_set=True,
     #                             include_intermediates=True
     #                              ) as session:
     #    call_llm_and_sum_of_squares(44, 67)
 
-    # with ScorecardSessionManager(test_set_prefix="live_demo2", 
+    # with ScorecardSessionManager(test_set_prefix="live_demo2",
     #                              tags={'type': 'test sessions'},
     #                              create_test_set=True,
     #                              include_intermediates=True) as session:
@@ -95,6 +105,4 @@ if __name__ == '__main__':
     #    for test_case in run_context:
     #        print(test_case)
 
-
     RunContextManager(test_set=37, runnable=prompt_llm).run()
-
