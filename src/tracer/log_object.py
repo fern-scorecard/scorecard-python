@@ -74,9 +74,3 @@ class Output(BaseModel):
     @classmethod
     def from_return_value(cls, value: Any, sig: Signature) -> "Output":
         return cls(type=type_to_str(sig.return_annotation), value=value)
-
-    value: Any
-
-    @classmethod
-    def from_return_value(cls, value: Any, sig: Signature) -> "Output":
-        return cls(type=type_to_str(sig.return_annotation), value=value)

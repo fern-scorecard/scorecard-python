@@ -18,8 +18,3 @@ __all__ = [
 def scorecard_tracer(client: OpenAI) -> OpenAI:
     monkey_patch_openai_chat_completions(client)
     return client
-
-
-def scorecard_tracer(client: OpenAI) -> OpenAI:
-    monkey_patch_openai_chat_completions(client)
-    return client
