@@ -9,13 +9,15 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 httpx = ">=0.21.2"
 pydantic = ">= 1.9.2, < 2.5.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "0.971"
-pytest = "^7.4.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.1"
 
 [build-system]
 requires = ["poetry-core"]
