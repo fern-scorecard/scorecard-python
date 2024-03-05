@@ -9,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8, <4.0"
 httpx = ">=0.21.2"
 pydantic = ">= 1.9.2, < 2.5.0"
 openai = "^1.13.3"
