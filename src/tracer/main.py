@@ -4,16 +4,9 @@
 # but this file will be removed before the sdk is released.
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Union
 
-from tracer import (
-    scorecard_function_tracer,
-    scorecard_tracer,
-    ScorecardSessionManager,
-    RunContextManager,
-)
+from tracer import RunContextManager, scorecard_function_tracer, scorecard_tracer
 
 
 class Settings(BaseSettings):

@@ -2,19 +2,17 @@ from typing import Dict, List, Literal, Optional, Union
 
 from httpx import Timeout
 from openai import OpenAI
-from openai._streaming import Stream
-from openai._types import NOT_GIVEN, Body, Headers, NotGiven, Omit, Query
-from openai.resources.chat.completions import Completions
+from openai._types import NOT_GIVEN, Body, Headers, NotGiven, Query
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
-from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
-from openai.types.chat.chat_completion_tool_choice_option_param import \
-    ChatCompletionToolChoiceOptionParam
-from openai.types.chat.chat_completion_tool_param import \
-    ChatCompletionToolParam
-from openai.types.chat.completion_create_params import (Function, FunctionCall,
-                                                        ResponseFormat)
-from pydantic.functional_serializers import PlainSerializer
-from typing_extensions import Annotated
+from openai.types.chat.chat_completion_tool_choice_option_param import (
+    ChatCompletionToolChoiceOptionParam,
+)
+from openai.types.chat.chat_completion_tool_param import ChatCompletionToolParam
+from openai.types.chat.completion_create_params import (
+    Function,
+    FunctionCall,
+    ResponseFormat,
+)
 
 from .tracer import scorecard_function_tracer
 
@@ -29,22 +27,22 @@ def monkey_patch_openai_chat_completions(client: OpenAI):
         model: Union[
             str,
             Literal[
-            "gpt-4-0125-preview",
-            "gpt-4-turbo-preview",
-            "gpt-4-1106-preview",
-            "gpt-4-vision-preview",
-            "gpt-4",
-            "gpt-4-0314",
-            "gpt-4-0613",
-            "gpt-4-32k",
-            "gpt-4-32k-0314",
-            "gpt-4-32k-0613",
-            "gpt-3.5-turbo",
-            "gpt-3.5-turbo-16k",
-            "gpt-3.5-turbo-0301",
-            "gpt-3.5-turbo-0613",
-            "gpt-3.5-turbo-1106",
-            "gpt-3.5-turbo-16k-0613",
+                "gpt-4-0125-preview",
+                "gpt-4-turbo-preview",
+                "gpt-4-1106-preview",
+                "gpt-4-vision-preview",
+                "gpt-4",
+                "gpt-4-0314",
+                "gpt-4-0613",
+                "gpt-4-32k",
+                "gpt-4-32k-0314",
+                "gpt-4-32k-0613",
+                "gpt-3.5-turbo",
+                "gpt-3.5-turbo-16k",
+                "gpt-3.5-turbo-0301",
+                "gpt-3.5-turbo-0613",
+                "gpt-3.5-turbo-1106",
+                "gpt-3.5-turbo-16k-0613",
             ],
         ],
         frequency_penalty: Optional[float] | NotGiven = NOT_GIVEN,
@@ -58,8 +56,7 @@ def monkey_patch_openai_chat_completions(client: OpenAI):
         response_format: ResponseFormat | NotGiven = NOT_GIVEN,
         seed: Optional[int] | NotGiven = NOT_GIVEN,
         stop: Union[Optional[str], List[str]] | NotGiven = NOT_GIVEN,
-        stream: Optional[Literal[False]
-                         ] | Literal[True] | NotGiven = NOT_GIVEN,
+        stream: Optional[Literal[False]] | Literal[True] | NotGiven = NOT_GIVEN,
         temperature: Optional[float] | NotGiven = NOT_GIVEN,
         tool_choice: ChatCompletionToolChoiceOptionParam | NotGiven = NOT_GIVEN,
         tools: List[ChatCompletionToolParam] | NotGiven = NOT_GIVEN,
@@ -72,7 +69,8 @@ def monkey_patch_openai_chat_completions(client: OpenAI):
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
-            timeout: float | Timeout | None | NotGiven = NOT_GIVEN,) -> ChatCompletion:
+        timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> ChatCompletion:
         # Log the input arguments and keyword arguments
         # Capture the input arguments for logging
         args = locals()
@@ -105,7 +103,8 @@ def monkey_patch_openai_chat_completions(client: OpenAI):
             extra_headers=extra_headers,
             extra_query=extra_query,
             extra_body=extra_body,
-            timeout=timeout,)
+            timeout=timeout,
+        )
 
         # Call the original method
 

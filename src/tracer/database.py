@@ -1,12 +1,13 @@
-from pydantic import BaseModel, Field, ConfigDict, PlainSerializer, computed_field
-from pydantic_settings import SettingsConfigDict, BaseSettings
 from datetime import datetime, timedelta
-from supabase._sync.client import create_client
-from postgrest.exceptions import APIError
-from postgrest.base_request_builder import APIResponse
-from postgrest._sync.request_builder import SyncRequestBuilder
-from typing import Annotated, Dict, TypeVar, Generic, Type, List
 from threading import Lock
+from typing import Annotated, Dict, Generic, List, Type, TypeVar
+
+from postgrest._sync.request_builder import SyncRequestBuilder
+from postgrest.base_request_builder import APIResponse
+from postgrest.exceptions import APIError
+from pydantic import BaseModel, ConfigDict, Field, PlainSerializer, computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from supabase._sync.client import create_client
 
 from tracer.log_object import Input, InputArgument, Output
 
@@ -24,7 +25,7 @@ class Table(Generic[BaseSchemaT]):
     def insert(self, data: BaseSchemaT) -> List[BaseSchemaT]:
         try:
             response = self.table.insert(data.model_dump(exclude_none=True)).execute()
-        except Exception as e:
+        except Exception:
             # this is a silent failure and that is bad. But more on this later.
             return []
         else:
@@ -138,4 +139,5 @@ class Session(BaseSchema):
 if __name__ == "__main__":
 
     for case in TestSet.get(id=11).get_test_cases():
+        print(case.input.jsonify())
         print(case.input.jsonify())

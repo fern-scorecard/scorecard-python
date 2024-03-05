@@ -9,9 +9,8 @@ from tracer.database import LogRecord, Table
 # I'll probably take a dependency on the sdk for this.
 # I dunno yet tbh.
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(message)s',
-    filename=f'tracer.log')
+    level=logging.INFO, format="%(asctime)s - %(message)s", filename="tracer.log"
+)
 logger = logging.getLogger(__name__)
 logRecordTable = Table(LogRecord)
 

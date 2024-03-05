@@ -15,6 +15,7 @@ pydantic = ">= 1.9.2, < 2.5.0"
 openai = "^1.13.3"
 supabase = "^2.4.0"
 postgrest = "^0.16.1"
+pydantic-settings = "^2.2.1"
 
 [tool.poetry.dev-dependencies]
 mypy = "0.971"
