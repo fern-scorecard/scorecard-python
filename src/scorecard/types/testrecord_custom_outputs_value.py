@@ -3,5 +3,6 @@
 import typing
 
 from .file_url import FileUrl
+from .json_object import JsonObject
 
-TestrecordCustomOutputsValue = typing.Union[str, FileUrl, typing.Any]
+TestrecordCustomOutputsValue = typing.Union[str, FileUrl, JsonObject]

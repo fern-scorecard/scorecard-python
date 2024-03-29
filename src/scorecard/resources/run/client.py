@@ -13,7 +13,7 @@ from ...errors.unauthorized_error import UnauthorizedError
 from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.http_validation_error import HttpValidationError
 from ...types.not_found_error_body import NotFoundErrorBody
-from ...types.run_external import RunExternal
+from ...types.run import Run
 from ...types.run_status import RunStatus
 from ...types.unauthenticated_error import UnauthenticatedError
 from ...types.unauthorized_error_body import UnauthorizedErrorBody
@@ -41,7 +41,7 @@ class RunClient:
         source: typing.Optional[str] = OMIT,
         notes: typing.Optional[str] = OMIT,
         prompt_template: typing.Optional[str] = OMIT,
-    ) -> RunExternal:
+    ) -> Run:
         """
         Create a new Run
 
@@ -95,7 +95,7 @@ class RunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -110,7 +110,7 @@ class RunClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, run_id: int) -> RunExternal:
+    def get(self, run_id: int) -> Run:
         """
         Retrieve a Run metadata
 
@@ -133,7 +133,7 @@ class RunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -148,7 +148,7 @@ class RunClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update_status(self, run_id: int, *, status: RunStatus) -> RunExternal:
+    def update_status(self, run_id: int, *, status: RunStatus) -> Run:
         """
         Update the status of a run.
 
@@ -176,7 +176,7 @@ class RunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -206,7 +206,7 @@ class AsyncRunClient:
         source: typing.Optional[str] = OMIT,
         notes: typing.Optional[str] = OMIT,
         prompt_template: typing.Optional[str] = OMIT,
-    ) -> RunExternal:
+    ) -> Run:
         """
         Create a new Run
 
@@ -260,7 +260,7 @@ class AsyncRunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -275,7 +275,7 @@ class AsyncRunClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, run_id: int) -> RunExternal:
+    async def get(self, run_id: int) -> Run:
         """
         Retrieve a Run metadata
 
@@ -298,7 +298,7 @@ class AsyncRunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -313,7 +313,7 @@ class AsyncRunClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update_status(self, run_id: int, *, status: RunStatus) -> RunExternal:
+    async def update_status(self, run_id: int, *, status: RunStatus) -> Run:
         """
         Update the status of a run.
 
@@ -341,7 +341,7 @@ class AsyncRunClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(RunExternal, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Run, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:

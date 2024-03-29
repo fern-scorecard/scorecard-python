@@ -4,7 +4,6 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from .score_status import ScoreStatus
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -12,19 +11,22 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class Grade(pydantic.BaseModel):
+class Run(pydantic.BaseModel):
     id: typing.Optional[int]
-    run_id: typing.Optional[int]
-    testcase_id: typing.Optional[int]
-    testrecord_id: typing.Optional[int]
-    metric_id: typing.Optional[int]
-    user_id: typing.Optional[str]
-    binary_score: typing.Optional[bool]
-    int_score: typing.Optional[int]
-    reasoning: typing.Optional[str]
-    human_eval: typing.Optional[bool]
-    status: typing.Optional[ScoreStatus]
-    error_message: typing.Optional[str]
+    created_at: typing.Optional[dt.datetime]
+    updated_at: typing.Optional[dt.datetime]
+    execution_start_time: typing.Optional[dt.datetime]
+    execution_end_time: typing.Optional[dt.datetime]
+    testset_id: typing.Optional[int]
+    status: typing.Optional[str]
+    limit_testcases: typing.Optional[int]
+    source: typing.Optional[str]
+    model_params: typing.Optional[typing.Dict[str, typing.Any]]
+    notes: typing.Optional[str]
+    scoring_config_id: typing.Optional[int]
+    prompt_template: typing.Optional[str]
+    scoring_start_time: typing.Optional[dt.datetime]
+    scoring_end_time: typing.Optional[dt.datetime]
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

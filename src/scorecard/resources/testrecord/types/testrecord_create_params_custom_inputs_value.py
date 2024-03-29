@@ -3,5 +3,6 @@
 import typing
 
 from ....types.file_url import FileUrl
+from ....types.json_object import JsonObject
 
-TestrecordCreateParamsCustomInputsValue = typing.Union[FileUrl, str]
+TestrecordCreateParamsCustomInputsValue = typing.Union[str, FileUrl, JsonObject]

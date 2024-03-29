@@ -19,7 +19,7 @@ except ImportError:
 class Testrecord(pydantic.BaseModel):
     id: typing.Optional[int]
     created_at: typing.Optional[dt.datetime]
-    run_id: int
+    run_id: typing.Optional[int]
     testset_id: typing.Optional[int]
     testcase_id: typing.Optional[int]
     user_query: typing.Optional[str]

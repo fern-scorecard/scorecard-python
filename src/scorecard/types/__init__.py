@@ -12,13 +12,17 @@ from .execution_params import ExecutionParams
 from .file_url import FileUrl
 from .grade import Grade
 from .http_validation_error import HttpValidationError
+from .json_object import JsonObject
+from .json_object_input_value import JsonObjectInputValue
+from .json_object_output_value import JsonObjectOutputValue
 from .model_params import ModelParams
 from .not_found_error_body import NotFoundErrorBody
 from .paginated_testcase_response import PaginatedTestcaseResponse
 from .role_enum import RoleEnum
-from .run_external import RunExternal
+from .run import Run
 from .run_status import RunStatus
 from .score_execution_params import ScoreExecutionParams
+from .score_status import ScoreStatus
 from .scoring_params import ScoringParams
 from .test_case import TestCase
 from .test_case_create import TestCaseCreate
@@ -52,13 +56,17 @@ __all__ = [
     "FileUrl",
     "Grade",
     "HttpValidationError",
+    "JsonObject",
+    "JsonObjectInputValue",
+    "JsonObjectOutputValue",
     "ModelParams",
     "NotFoundErrorBody",
     "PaginatedTestcaseResponse",
     "RoleEnum",
-    "RunExternal",
+    "Run",
     "RunStatus",
     "ScoreExecutionParams",
+    "ScoreStatus",
     "ScoringParams",
     "TestCase",
     "TestCaseCreate",
