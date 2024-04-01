@@ -3,6 +3,7 @@ name = "scorecard-ai"
 version = "0.2.1"
 description = ""
 readme = "README.md"
+license = "Apache-2.0"
 authors = []
 packages = [
     { include = "scorecard", from = "src"}
