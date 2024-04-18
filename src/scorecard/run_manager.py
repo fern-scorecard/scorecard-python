@@ -1,4 +1,4 @@
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Optional
 from scorecard.client import Scorecard
 from scorecard.types import RunStatus, TestCase, Run
 from scorecard.api_key import get_api_key
@@ -10,7 +10,7 @@ class TestOutput(BaseModel):
     response: str
 
 class RunManager:
-    def __init__(self, test_set: int, scoring_config_id: int, runnable: Callable[[TestCase], TestOutput], client: Scorecard | None = None):
+    def __init__(self, test_set: int, scoring_config_id: int, runnable: Callable[[TestCase], TestOutput], client: Optional[Scorecard] = None):
         self.test_set = test_set
         self.scoring_config_id = scoring_config_id
         self.runnable = runnable
