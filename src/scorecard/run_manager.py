@@ -1,6 +1,6 @@
-from typing import Callable, Tuple, Optional
+from typing import Callable, Tuple, Optional, Union
 from scorecard.client import Scorecard
-from scorecard.types import RunStatus, TestCase, Run
+from scorecard.types import RunStatus, TestCase, Run, Testset
 from scorecard.api_key import get_api_key
 from pydantic import BaseModel
 
@@ -10,7 +10,14 @@ class TestOutput(BaseModel):
     response: str
 
 class RunManager:
-    def __init__(self, test_set: int, scoring_config_id: int, runnable: Callable[[TestCase], TestOutput], client: Optional[Scorecard] = None):
+    def __init__(self, test_set: Union[int, Testset], scoring_config_id: int, runnable: Callable[[TestCase], TestOutput], client: Optional[Scorecard] = None):
+
+        if isinstance(test_set, Testset):
+            if test_set.id is None:
+                raise ValueError("Testset has not been synced with scorecard.")
+            else:
+                test_set = test_set.id
+
         self.test_set = test_set
         self.scoring_config_id = scoring_config_id
         self.runnable = runnable
