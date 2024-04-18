@@ -4,19 +4,15 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
 from .testrecord_custom_labels_value import TestrecordCustomLabelsValue
 from .testrecord_custom_outputs_value import TestrecordCustomOutputsValue
 from .testrecord_model_debug_info_value import TestrecordModelDebugInfoValue
 from .testrecord_model_params_value import TestrecordModelParamsValue
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Testrecord(pydantic.BaseModel):
+class Testrecord(pydantic_v1.BaseModel):
     id: typing.Optional[int]
     created_at: typing.Optional[dt.datetime]
     run_id: typing.Optional[int]
@@ -46,4 +42,5 @@ class Testrecord(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.forbid
         json_encoders = {dt.datetime: serialize_datetime}

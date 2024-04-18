@@ -4,22 +4,19 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
 from .custom_variable import CustomVariable
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class CustomSchema(pydantic.BaseModel):
+class CustomSchema(pydantic_v1.BaseModel):
     """
     Custom schema model with an ordered list of custom variables.
     """
 
-    variables: typing.Optional[typing.List[CustomVariable]] = pydantic.Field(
-        description="Ordered list of custom variables"
-    )
+    variables: typing.Optional[typing.List[CustomVariable]] = pydantic_v1.Field()
+    """
+    Ordered list of custom variables
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -32,4 +29,5 @@ class CustomSchema(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.forbid
         json_encoders = {dt.datetime: serialize_datetime}

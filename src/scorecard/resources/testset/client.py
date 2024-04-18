@@ -7,7 +7,9 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.pydantic_utilities import pydantic_v1
 from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.not_found_error import NotFoundError
 from ...errors.unauthorized_error import UnauthorizedError
@@ -20,11 +22,6 @@ from ...types.testset import Testset
 from ...types.unauthenticated_error import UnauthenticatedError
 from ...types.unauthorized_error_body import UnauthorizedErrorBody
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
-
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
@@ -33,12 +30,14 @@ class TestsetClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get(self, testset_id: int) -> Testset:
+    def get(self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None) -> Testset:
         """
         Retrieve Testset metadata without Testcase data
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import Scorecard
 
@@ -51,32 +50,52 @@ class TestsetClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete(self, testset_id: int) -> Testset:
+    def delete(self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None) -> Testset:
         """
         Delete a Testset
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import Scorecard
 
@@ -89,20 +108,38 @@ class TestsetClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -116,6 +153,7 @@ class TestsetClient:
         description: typing.Optional[str] = OMIT,
         using_retrieval: typing.Optional[bool] = OMIT,
         custom_schema: typing.Optional[CustomSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Testset:
         """
         Create a new Testset
@@ -128,6 +166,8 @@ class TestsetClient:
             - using_retrieval: typing.Optional[bool].
 
             - custom_schema: typing.Optional[CustomSchema].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import Scorecard
 
@@ -148,32 +188,55 @@ class TestsetClient:
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/testset"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def read_schema(self, testset_id: int) -> CustomSchema:
+    def read_schema(self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None) -> CustomSchema:
         """
         Read the schema of a Testset
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import Scorecard
 
@@ -186,20 +249,38 @@ class TestsetClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/schema"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/schema"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(CustomSchema, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(CustomSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -207,7 +288,12 @@ class TestsetClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_testcases(
-        self, testset_id: int, *, offset: typing.Optional[int] = None, limit: typing.Optional[int] = None
+        self,
+        testset_id: int,
+        *,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> PaginatedTestcaseResponse:
         """
         Retrieve all Testcases from a Testset
@@ -218,6 +304,8 @@ class TestsetClient:
             - offset: typing.Optional[int].
 
             - limit: typing.Optional[int].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import Scorecard
 
@@ -230,21 +318,48 @@ class TestsetClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/testcase"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(PaginatedTestcaseResponse, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(PaginatedTestcaseResponse, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -256,12 +371,14 @@ class AsyncTestsetClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get(self, testset_id: int) -> Testset:
+    async def get(self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None) -> Testset:
         """
         Retrieve Testset metadata without Testcase data
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import AsyncScorecard
 
@@ -274,32 +391,52 @@ class AsyncTestsetClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete(self, testset_id: int) -> Testset:
+    async def delete(self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None) -> Testset:
         """
         Delete a Testset
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import AsyncScorecard
 
@@ -312,20 +449,38 @@ class AsyncTestsetClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -339,6 +494,7 @@ class AsyncTestsetClient:
         description: typing.Optional[str] = OMIT,
         using_retrieval: typing.Optional[bool] = OMIT,
         custom_schema: typing.Optional[CustomSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Testset:
         """
         Create a new Testset
@@ -351,6 +507,8 @@ class AsyncTestsetClient:
             - using_retrieval: typing.Optional[bool].
 
             - custom_schema: typing.Optional[CustomSchema].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import AsyncScorecard
 
@@ -371,32 +529,57 @@ class AsyncTestsetClient:
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/testset"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Testset, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(Testset, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def read_schema(self, testset_id: int) -> CustomSchema:
+    async def read_schema(
+        self, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CustomSchema:
         """
         Read the schema of a Testset
 
         Parameters:
             - testset_id: int.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import AsyncScorecard
 
@@ -409,20 +592,38 @@ class AsyncTestsetClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/schema"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/schema"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(CustomSchema, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(CustomSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -430,7 +631,12 @@ class AsyncTestsetClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_testcases(
-        self, testset_id: int, *, offset: typing.Optional[int] = None, limit: typing.Optional[int] = None
+        self,
+        testset_id: int,
+        *,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> PaginatedTestcaseResponse:
         """
         Retrieve all Testcases from a Testset
@@ -441,6 +647,8 @@ class AsyncTestsetClient:
             - offset: typing.Optional[int].
 
             - limit: typing.Optional[int].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from scorecard.client import AsyncScorecard
 
@@ -453,21 +661,48 @@ class AsyncTestsetClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{testset_id}/testcase"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(PaginatedTestcaseResponse, _response.json())  # type: ignore
+            return pydantic_v1.parse_obj_as(PaginatedTestcaseResponse, _response.json())  # type: ignore
         if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
+            raise UnauthorizedError(pydantic_v1.parse_obj_as(UnauthenticatedError, _response.json()))  # type: ignore
         if _response.status_code == 403:
-            raise ForbiddenError(pydantic.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
+            raise ForbiddenError(pydantic_v1.parse_obj_as(UnauthorizedErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
+            raise NotFoundError(pydantic_v1.parse_obj_as(NotFoundErrorBody, _response.json()))  # type: ignore
         if _response.status_code == 422:
-            raise UnprocessableEntityError(pydantic.parse_obj_as(HttpValidationError, _response.json()))  # type: ignore
+            raise UnprocessableEntityError(
+                pydantic_v1.parse_obj_as(HttpValidationError, _response.json())  # type: ignore
+            )
         try:
             _response_json = _response.json()
         except JSONDecodeError:

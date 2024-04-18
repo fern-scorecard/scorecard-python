@@ -60,6 +60,7 @@ from .resources import (
     testset,
 )
 from .environment import ScorecardEnvironment
+from .version import __version__
 
 __all__ = [
     "AppCreateRunParams",
@@ -116,6 +117,7 @@ __all__ = [
     "UnprocessableEntityError",
     "ValidationError",
     "ValidationErrorLocItem",
+    "__version__",
     "run",
     "score",
     "testcase",

@@ -4,14 +4,10 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import pydantic_v1
 
 
-class FileUrl(pydantic.BaseModel):
+class FileUrl(pydantic_v1.BaseModel):
     """
     File model with url and name.
     """
@@ -30,4 +26,5 @@ class FileUrl(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.forbid
         json_encoders = {dt.datetime: serialize_datetime}

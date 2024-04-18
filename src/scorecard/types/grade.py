@@ -4,15 +4,11 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
 from .score_status import ScoreStatus
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Grade(pydantic.BaseModel):
+class Grade(pydantic_v1.BaseModel):
     id: typing.Optional[int]
     run_id: typing.Optional[int]
     testcase_id: typing.Optional[int]
@@ -37,4 +33,5 @@ class Grade(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.forbid
         json_encoders = {dt.datetime: serialize_datetime}
