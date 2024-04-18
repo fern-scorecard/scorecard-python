@@ -4,3 +4,6 @@ README.md
 
 # Add `run_tests` function
 src/scorecard/client.py
+src/scorecard/run_context.py
+src/scorecard/api_key.py
+tests/test_run_manager.py
