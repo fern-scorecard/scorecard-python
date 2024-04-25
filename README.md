@@ -99,7 +99,7 @@ scorecard_client = Scorecard(
 ```
 
 ## Handling Exceptions
-All exceptions thrown by the SDK will sublcass [scorecard.ApiError](./src/scorecard/core/api_error.py). 
+All exceptions thrown by the SDK will subclass [scorecard.ApiError](./src/scorecard/core/api_error.py). 
 
 ```python
 from scorecard.core import ApiError
