@@ -2,12 +2,13 @@
 
 import typing
 
+from .base_client import BaseScorecard, AsyncBaseScorecard
 from .core.api_error import ApiError
 from .types import RunStatus
 from .types import Run
 
 
-class Scorecard:
+class Scorecard(BaseScorecard):
 
     def run_tests(
         self,
@@ -33,7 +34,7 @@ class Scorecard:
             raise ApiError(
                 body=f"Didn't receive run id after creating run for testid={input_testset_id}"
             )
-        self.run.update_status(run.id, status=RunStatus.RUNNING_EXECUTION)
+        self.run.update_status(run.id, status="running_execution")
         testcases = self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
@@ -58,7 +59,7 @@ class Scorecard:
                 response=response,
             )
 
-        self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
+        self.run.update_status(run.id, status="awaiting_scoring")
 
         print("Finished running testcases.")
         print(
@@ -67,7 +68,7 @@ class Scorecard:
         return run
 
 
-class AsyncScorecard:
+class AsyncScorecard(AsyncBaseScorecard):
 
     async def run_tests(
         self,
@@ -93,7 +94,7 @@ class AsyncScorecard:
             raise ApiError(
                 body=f"Didn't receive run id after creating run for testid={input_testset_id}"
             )
-        await self.run.update_status(run.id, status=RunStatus.RUNNING_EXECUTION)
+        await self.run.update_status(run.id, status="running_execution")
         testcases = await self.testset.get_testcases(input_testset_id)
 
         for testcase in testcases.results:
@@ -118,7 +119,7 @@ class AsyncScorecard:
                 response=response,
             )
 
-        await self.run.update_status(run.id, status=RunStatus.AWAITING_SCORING)
+        await self.run.update_status(run.id, status="awaiting_scoring")
 
         print("Finished running testcases.")
         print(
