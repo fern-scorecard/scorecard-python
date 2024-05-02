@@ -4,27 +4,24 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
+from ..core.unchecked_base_model import UncheckedBaseModel
 from .custom_schema import CustomSchema
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Testset(pydantic.BaseModel):
-    id: typing.Optional[int]
-    created_at: typing.Optional[dt.datetime]
-    name: typing.Optional[str]
-    description: typing.Optional[str]
-    using_retrieval: typing.Optional[bool]
-    ingestion_method: typing.Optional[str]
-    num_testcases: typing.Optional[int]
-    published: typing.Optional[bool]
-    updated_at: typing.Optional[dt.datetime]
-    is_archived: typing.Optional[bool]
-    project_id: typing.Optional[int]
-    custom_schema: typing.Optional[CustomSchema]
+class Testset(UncheckedBaseModel):
+    id: typing.Optional[int] = None
+    created_at: typing.Optional[dt.datetime] = None
+    name: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    using_retrieval: typing.Optional[bool] = None
+    ingestion_method: typing.Optional[str] = None
+    num_testcases: typing.Optional[int] = None
+    published: typing.Optional[bool] = None
+    updated_at: typing.Optional[dt.datetime] = None
+    is_archived: typing.Optional[bool] = None
+    project_id: typing.Optional[int] = None
+    custom_schema: typing.Optional[CustomSchema] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -37,4 +34,5 @@ class Testset(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

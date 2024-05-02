@@ -4,27 +4,24 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
+from ..core.unchecked_base_model import UncheckedBaseModel
 from .score_status import ScoreStatus
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Grade(pydantic.BaseModel):
-    id: typing.Optional[int]
-    run_id: typing.Optional[int]
-    testcase_id: typing.Optional[int]
-    testrecord_id: typing.Optional[int]
-    metric_id: typing.Optional[int]
-    user_id: typing.Optional[str]
-    binary_score: typing.Optional[bool]
-    int_score: typing.Optional[int]
-    reasoning: typing.Optional[str]
-    human_eval: typing.Optional[bool]
-    status: typing.Optional[ScoreStatus]
-    error_message: typing.Optional[str]
+class Grade(UncheckedBaseModel):
+    id: typing.Optional[int] = None
+    run_id: typing.Optional[int] = None
+    testcase_id: typing.Optional[int] = None
+    testrecord_id: typing.Optional[int] = None
+    metric_id: typing.Optional[int] = None
+    user_id: typing.Optional[str] = None
+    binary_score: typing.Optional[bool] = None
+    int_score: typing.Optional[int] = None
+    reasoning: typing.Optional[str] = None
+    human_eval: typing.Optional[bool] = None
+    status: typing.Optional[ScoreStatus] = None
+    error_message: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -37,4 +34,5 @@ class Grade(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

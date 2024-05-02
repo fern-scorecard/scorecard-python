@@ -45,21 +45,17 @@ from .types import (
     ValidationErrorLocItem,
 )
 from .errors import ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableEntityError
-from .resources import (
-    TestcaseCreateParamsCustomInputsValue,
-    TestcaseCreateParamsCustomLabelsValue,
+from . import run, score, testcase, testrecord, testset
+from .environment import ScorecardEnvironment
+from .testcase import TestcaseCreateParamsCustomInputsValue, TestcaseCreateParamsCustomLabelsValue
+from .testrecord import (
     TestrecordCreateParamsCustomInputsValue,
     TestrecordCreateParamsCustomLabelsValue,
     TestrecordCreateParamsCustomOutputsValue,
     TestrecordCreateParamsModelDebugInfoValue,
     TestrecordCreateParamsModelParamsValue,
-    run,
-    score,
-    testcase,
-    testrecord,
-    testset,
 )
-from .environment import ScorecardEnvironment
+from .version import __version__
 
 __all__ = [
     "AppCreateRunParams",
@@ -116,6 +112,7 @@ __all__ = [
     "UnprocessableEntityError",
     "ValidationError",
     "ValidationErrorLocItem",
+    "__version__",
     "run",
     "score",
     "testcase",

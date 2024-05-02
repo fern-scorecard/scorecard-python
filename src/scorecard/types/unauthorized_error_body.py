@@ -4,17 +4,14 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import pydantic_v1
+from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class UnauthorizedErrorBody(pydantic.BaseModel):
-    error: typing.Optional[str]
-    error_description: typing.Optional[str]
-    status_code: typing.Optional[int]
+class UnauthorizedErrorBody(UncheckedBaseModel):
+    error: typing.Optional[str] = None
+    error_description: typing.Optional[str] = None
+    status_code: typing.Optional[int] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -27,4 +24,5 @@ class UnauthorizedErrorBody(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

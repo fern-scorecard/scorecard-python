@@ -2,7 +2,7 @@
 
 import typing
 
-from ....types.file_url import FileUrl
-from ....types.json_object import JsonObject
+from ...types.file_url import FileUrl
+from ...types.json_object import JsonObject
 
 TestrecordCreateParamsCustomOutputsValue = typing.Union[str, FileUrl, JsonObject]

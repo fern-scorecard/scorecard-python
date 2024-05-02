@@ -6,17 +6,15 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import pydantic_v1
+from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class JsonObject(pydantic.BaseModel):
-    value: typing.Optional[JsonObjectOutputValue] = pydantic.Field(
-        description="The value of the JSON object, which can be a dictionary, list, string, integer, float, boolean, or None."
-    )
+class JsonObject(UncheckedBaseModel):
+    value: typing.Optional[JsonObjectOutputValue] = pydantic_v1.Field(default=None)
+    """
+    The value of the JSON object, which can be a dictionary, list, string, integer, float, boolean, or None.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -29,6 +27,7 @@ class JsonObject(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
 
 

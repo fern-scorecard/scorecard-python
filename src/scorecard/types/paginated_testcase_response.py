@@ -4,18 +4,15 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import pydantic_v1
+from ..core.unchecked_base_model import UncheckedBaseModel
 from .test_case import TestCase
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class PaginatedTestcaseResponse(pydantic.BaseModel):
+class PaginatedTestcaseResponse(UncheckedBaseModel):
     count: int
-    next: typing.Optional[str]
-    previous: typing.Optional[str]
+    next: typing.Optional[str] = None
+    previous: typing.Optional[str] = None
     results: typing.List[TestCase]
 
     def json(self, **kwargs: typing.Any) -> str:
@@ -29,4 +26,5 @@ class PaginatedTestcaseResponse(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
