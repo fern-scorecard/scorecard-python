@@ -1,3 +1,5 @@
 # Add files that you don't want Fern to modify
 
 README.md
+LICENSE
+src/client.py
