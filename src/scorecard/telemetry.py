@@ -20,6 +20,11 @@ def setup(name, scorecard_config, debug=False):
     OpenAIInstrumentor().instrument()
 
     provider = TracerProvider(resource=Resource(attributes={SERVICE_NAME: name}))
+    url = (
+        scorecard_config.telemetry_url
+        if scorecard_config.telemetry_url
+        else "https://telemetry.getscorecard.ai"
+    )
 
     if debug:
         # Export the trace to the console.
@@ -29,7 +34,7 @@ def setup(name, scorecard_config, debug=False):
 
     # Export the trace to the Scorecard Telemetry server.
     otlp_exporter = OTLPSpanExporter(
-        endpoint=f"{scorecard_config.telemetry_url}/v1/traces",
+        endpoint=f"{url}/v1/traces",
         headers={"Authorization": f"Bearer {scorecard_config.telemetry_key}"},
     )
     otlp_processor = BatchSpanProcessor(span_exporter=otlp_exporter)

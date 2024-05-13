@@ -3,3 +3,4 @@
 README.md
 LICENSE
 src/scorecard/client.py
+src/scorecard/telemetry.py

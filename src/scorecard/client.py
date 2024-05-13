@@ -6,9 +6,22 @@ from .base_client import BaseScorecard, AsyncBaseScorecard
 from .core.api_error import ApiError
 from .types import RunStatus
 from .types import Run
+from .telemetry import setup
 
 
 class Scorecard(BaseScorecard):
+    def setup_telemetry(self, name, scorecard_config, debug=False):
+        """
+        Sets up a default telemetry configuration for Scorecard.
+        Parameters:
+            - name: string. The name of the service. e.g. your application name
+            - scorecard_config.telemetry_url: string.
+            Your tracing endpoint. e.g. https://telemetry.getscorecard.ai
+            - scorecard_config.telemetry_key: string.
+            You can get this value from https://app.getscorecard.ai/settings
+            - debug: bool. Whether or not to log traces to the console.
+        """
+        setup(name, scorecard_config, debug)
 
     def run_tests(
         self,
@@ -69,6 +82,18 @@ class Scorecard(BaseScorecard):
 
 
 class AsyncScorecard(AsyncBaseScorecard):
+    def setup_telemetry(self, name, scorecard_config, debug=False):
+        """
+        Sets up a default telemetry configuration for Scorecard.
+        Parameters:
+            - name: string. The name of the service. e.g. your application name
+            - scorecard_config.telemetry_url: string.
+            Your tracing endpoint. e.g. https://telemetry.getscorecard.ai
+            - scorecard_config.telemetry_key: string.
+            You can get this value from https://app.getscorecard.ai/settings
+            - debug: bool. Whether or not to log traces to the console.
+        """
+        setup(name, scorecard_config, debug)
 
     async def run_tests(
         self,
