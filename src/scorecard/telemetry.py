@@ -12,6 +12,17 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 
 
 def setup(name, scorecard_config, debug=False):
+    """
+    Sets up a default telemetry configuration for Scorecard.
+    Parameters:
+        - name: string. The name of the service. e.g. your application name
+        - scorecard_config.telemetry_url: string.
+        Your tracing endpoint. e.g. https://telemetry.getscorecard.ai
+        - scorecard_config.telemetry_key: string.
+        You can get this value from https://app.getscorecard.ai/settings
+        - debug: bool. Whether or not to log traces to the console.
+    """
+
     BedrockInstrumentor().instrument()
     DSPyInstrumentor().instrument()
     LangChainInstrumentor().instrument()
