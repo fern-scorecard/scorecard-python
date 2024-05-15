@@ -8,11 +8,14 @@ import httpx
 from .core.api_error import ApiError
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .environment import ScorecardEnvironment
+from .prompt.client import AsyncPromptClient, PromptClient
 from .run.client import AsyncRunClient, RunClient
+from .run_metric.client import AsyncRunMetricClient, RunMetricClient
 from .score.client import AsyncScoreClient, ScoreClient
 from .testcase.client import AsyncTestcaseClient, TestcaseClient
 from .testrecord.client import AsyncTestrecordClient, TestrecordClient
 from .testset.client import AsyncTestsetClient, TestsetClient
+from .traces.client import AsyncTracesClient, TracesClient
 
 
 class BaseScorecard:
@@ -82,6 +85,9 @@ class BaseScorecard:
         self.testrecord = TestrecordClient(client_wrapper=self._client_wrapper)
         self.run = RunClient(client_wrapper=self._client_wrapper)
         self.score = ScoreClient(client_wrapper=self._client_wrapper)
+        self.run_metric = RunMetricClient(client_wrapper=self._client_wrapper)
+        self.traces = TracesClient(client_wrapper=self._client_wrapper)
+        self.prompt = PromptClient(client_wrapper=self._client_wrapper)
 
 
 class AsyncBaseScorecard:
@@ -151,6 +157,9 @@ class AsyncBaseScorecard:
         self.testrecord = AsyncTestrecordClient(client_wrapper=self._client_wrapper)
         self.run = AsyncRunClient(client_wrapper=self._client_wrapper)
         self.score = AsyncScoreClient(client_wrapper=self._client_wrapper)
+        self.run_metric = AsyncRunMetricClient(client_wrapper=self._client_wrapper)
+        self.traces = AsyncTracesClient(client_wrapper=self._client_wrapper)
+        self.prompt = AsyncPromptClient(client_wrapper=self._client_wrapper)
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: ScorecardEnvironment) -> str:

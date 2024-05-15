@@ -2,4 +2,4 @@
 
 import typing
 
-ScoreExecutionParams = typing.Any
+PromptModelParamsValue = typing.Union[int, float, str]

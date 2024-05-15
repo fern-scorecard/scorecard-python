@@ -2,4 +2,4 @@
 
 import typing
 
-AppTestRecordCreate = typing.Any
+PromptCreateParamsModelParamsValue = typing.Union[int, float, str, bool]

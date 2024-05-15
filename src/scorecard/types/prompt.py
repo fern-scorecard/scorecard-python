@@ -6,24 +6,22 @@ import typing
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import pydantic_v1
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .score_status import ScoreStatus
+from .prompt_model_params_value import PromptModelParamsValue
 
 
-class Grade(UncheckedBaseModel):
+class Prompt(UncheckedBaseModel):
+    org_id: typing.Optional[str] = None
     user_id: typing.Optional[str] = None
-    id: typing.Optional[int] = None
-    run_id: typing.Optional[int] = None
-    testcase_id: typing.Optional[int] = None
-    testrecord_id: typing.Optional[int] = None
-    metric_id: typing.Optional[int] = None
-    binary_score: typing.Optional[bool] = None
-    int_score: typing.Optional[int] = None
-    reasoning: typing.Optional[str] = None
-    human_eval: typing.Optional[bool] = None
-    status: typing.Optional[ScoreStatus] = None
-    error_message: typing.Optional[str] = None
+    id: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    is_archived: typing.Optional[bool] = None
+    prompt_template: typing.Optional[str] = None
+    model_params: typing.Optional[typing.Dict[str, typing.Optional[PromptModelParamsValue]]] = None
+    root_id: typing.Optional[str] = None
+    parent_id: typing.Optional[str] = None
+    merge_parent_id: typing.Optional[str] = None
     created_at: typing.Optional[dt.datetime] = None
-    updated_at: typing.Optional[dt.datetime] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

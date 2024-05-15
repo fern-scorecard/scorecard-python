@@ -39,6 +39,7 @@ class RunClient:
         source: typing.Optional[str] = OMIT,
         notes: typing.Optional[str] = OMIT,
         prompt_template: typing.Optional[str] = OMIT,
+        metrics: typing.Optional[typing.Sequence[int]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Run:
         """
@@ -60,6 +61,8 @@ class RunClient:
 
         prompt_template : typing.Optional[str]
 
+        metrics : typing.Optional[typing.Sequence[int]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -77,9 +80,9 @@ class RunClient:
         )
         client.run.create(
             testset_id=1,
-            scoring_config_id=2,
             status="RUNNING_EXECUTION",
             model_params={"param1": "value1", "param2": "value2"},
+            metrics=[1, 2],
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -97,6 +100,8 @@ class RunClient:
             _request["notes"] = notes
         if prompt_template is not OMIT:
             _request["prompt_template"] = prompt_template
+        if metrics is not OMIT:
+            _request["metrics"] = metrics
         _response = self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),
@@ -319,6 +324,7 @@ class AsyncRunClient:
         source: typing.Optional[str] = OMIT,
         notes: typing.Optional[str] = OMIT,
         prompt_template: typing.Optional[str] = OMIT,
+        metrics: typing.Optional[typing.Sequence[int]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Run:
         """
@@ -340,6 +346,8 @@ class AsyncRunClient:
 
         prompt_template : typing.Optional[str]
 
+        metrics : typing.Optional[typing.Sequence[int]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -357,9 +365,9 @@ class AsyncRunClient:
         )
         await client.run.create(
             testset_id=1,
-            scoring_config_id=2,
             status="RUNNING_EXECUTION",
             model_params={"param1": "value1", "param2": "value2"},
+            metrics=[1, 2],
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -377,6 +385,8 @@ class AsyncRunClient:
             _request["notes"] = notes
         if prompt_template is not OMIT:
             _request["prompt_template"] = prompt_template
+        if metrics is not OMIT:
+            _request["metrics"] = metrics
         _response = await self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),
