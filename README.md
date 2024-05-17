@@ -119,6 +119,25 @@ Error codes are as followed:
 | ----------- | -------------------------- |
 | 422         | `UnprocessableEntityError` |
 
+## Telemetry
+
+If you wish to use the Scorecard telemetry setup, you may choose to add the `telemetry` package extra:
+
+```bash
+pip install scorecard-ai[telemetry,instrument-openai]
+# or
+poetry add scorecard-ai --extras "telemetry instrument-openai"
+```
+
+Scorecard's SDK can auto-instrument certain AI tools for you by including them in the extras enumeration:
+
+- `instrument-bedrock`
+- `instrument-dspy`
+- `instrument-langchain`
+- `instrument-llama-index`
+- `instrument-mistralai`
+- `instrument-openai`
+
 ## Beta status
 
 This SDK is in beta, and there may be breaking changes between versions without a major version update. Therefore, we recommend pinning the package version to a specific version in your pyproject.toml file. This way, you can install the same version each time without breaking changes unless you are intentionally looking for the latest version.
