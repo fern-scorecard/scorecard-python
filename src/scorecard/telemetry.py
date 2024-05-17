@@ -1,16 +1,4 @@
-from openinference.instrumentation.bedrock import BedrockInstrumentor
-from openinference.instrumentation.dspy import DSPyInstrumentor
-from openinference.instrumentation.langchain import LangChainInstrumentor
-from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
-from openinference.instrumentation.mistralai import MistralAIInstrumentor
-from openinference.instrumentation.openai import OpenAIInstrumentor
-from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-
-
+# pylint: disable=import-outside-toplevel
 def setup(name, scorecard_config, debug=False):
     """
     Sets up a default telemetry configuration for Scorecard.
@@ -23,19 +11,52 @@ def setup(name, scorecard_config, debug=False):
         - debug: bool. Whether or not to log traces to the console.
     """
 
-    BedrockInstrumentor().instrument()
-    DSPyInstrumentor().instrument()
-    LangChainInstrumentor().instrument()
-    LlamaIndexInstrumentor().instrument()
-    MistralAIInstrumentor().instrument()
-    OpenAIInstrumentor().instrument()
+    try:
+        from opentelemetry import trace
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+    except ModuleNotFoundError as e:
+        print(e)
+
+    try:
+        from openinference.instrumentation.bedrock import BedrockInstrumentor
+        BedrockInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from openinference.instrumentation.dspy import DSPyInstrumentor
+        DSPyInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from openinference.instrumentation.langchain import LangChainInstrumentor
+        LangChainInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
+        LlamaIndexInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from openinference.instrumentation.mistralai import MistralAIInstrumentor
+        MistralAIInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        from openinference.instrumentation.openai import OpenAIInstrumentor
+        OpenAIInstrumentor().instrument()
+    except ModuleNotFoundError:
+        pass
 
     provider = TracerProvider(resource=Resource(attributes={SERVICE_NAME: name}))
-    url = (
-        scorecard_config.telemetry_url
-        if scorecard_config.telemetry_url
-        else "https://telemetry.getscorecard.ai"
-    )
 
     if debug:
         # Export the trace to the console.
@@ -44,8 +65,10 @@ def setup(name, scorecard_config, debug=False):
         provider.add_span_processor(console_processor)
 
     # Export the trace to the Scorecard Telemetry server.
+    from urllib.parse import urljoin
+    base = scorecard_config.telemetry_url or "https://telemetry.getscorecard.ai"
     otlp_exporter = OTLPSpanExporter(
-        endpoint=f"{url}/v1/traces",
+        endpoint=urljoin(base, "/v1/traces"),
         headers={"Authorization": f"Bearer {scorecard_config.telemetry_key}"},
     )
     otlp_processor = BatchSpanProcessor(span_exporter=otlp_exporter)
