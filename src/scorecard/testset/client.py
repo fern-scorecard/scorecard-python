@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
+from ..core.query_encoder import encode_query
 from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
@@ -37,6 +38,7 @@ class TestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to retrieve.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -62,8 +64,10 @@ class TestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -110,6 +114,7 @@ class TestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -135,9 +140,14 @@ class TestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
             headers=jsonable_encoder(
                 remove_none_from_dict(
                     {
@@ -227,8 +237,10 @@ class TestsetClient:
         _response = self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/testset"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -281,6 +293,7 @@ class TestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to retrieve the schema from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -306,8 +319,10 @@ class TestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/schema"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -361,10 +376,13 @@ class TestsetClient:
         Parameters
         ----------
         testset_id : int
+            The Testset ID to retrieve testcases from.
 
         offset : typing.Optional[int]
+            The offset to start from.
 
         limit : typing.Optional[int]
+            The number of testcases to return.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -390,17 +408,19 @@ class TestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
             ),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "offset": offset,
-                        "limit": limit,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
+            params=encode_query(
+                jsonable_encoder(
+                    remove_none_from_dict(
+                        {
+                            "offset": offset,
+                            "limit": limit,
+                            **(
+                                request_options.get("additional_query_parameters", {})
+                                if request_options is not None
+                                else {}
+                            ),
+                        }
+                    )
                 )
             ),
             headers=jsonable_encoder(
@@ -453,6 +473,7 @@ class AsyncTestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to retrieve.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -478,8 +499,10 @@ class AsyncTestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -526,6 +549,7 @@ class AsyncTestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -551,9 +575,14 @@ class AsyncTestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
             headers=jsonable_encoder(
                 remove_none_from_dict(
                     {
@@ -643,8 +672,10 @@ class AsyncTestsetClient:
         _response = await self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/testset"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -699,6 +730,7 @@ class AsyncTestsetClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to retrieve the schema from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -724,8 +756,10 @@ class AsyncTestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/schema"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -779,10 +813,13 @@ class AsyncTestsetClient:
         Parameters
         ----------
         testset_id : int
+            The Testset ID to retrieve testcases from.
 
         offset : typing.Optional[int]
+            The offset to start from.
 
         limit : typing.Optional[int]
+            The number of testcases to return.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -808,17 +845,19 @@ class AsyncTestsetClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
             ),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "offset": offset,
-                        "limit": limit,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
+            params=encode_query(
+                jsonable_encoder(
+                    remove_none_from_dict(
+                        {
+                            "offset": offset,
+                            "limit": limit,
+                            **(
+                                request_options.get("additional_query_parameters", {})
+                                if request_options is not None
+                                else {}
+                            ),
+                        }
+                    )
                 )
             ),
             headers=jsonable_encoder(

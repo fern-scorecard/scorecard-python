@@ -5,4 +5,4 @@ import typing
 from ...types.file_url import FileUrl
 from ...types.json_object import JsonObject
 
-TestcaseCreateParamsCustomLabelsValue = typing.Union[str, FileUrl, JsonObject]
+TestcaseCreateParamsCustomLabelsValue = typing.Union[FileUrl, JsonObject, str, int, float, bool]

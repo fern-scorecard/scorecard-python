@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
+from ..core.query_encoder import encode_query
 from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
@@ -78,12 +79,7 @@ class RunClient:
         client = Scorecard(
             api_key="YOUR_API_KEY",
         )
-        client.run.create(
-            testset_id=1,
-            status="RUNNING_EXECUTION",
-            model_params={"param1": "value1", "param2": "value2"},
-            metrics=[1, 2],
-        )
+        client.run.create()
         """
         _request: typing.Dict[str, typing.Any] = {}
         if testset_id is not OMIT:
@@ -105,8 +101,10 @@ class RunClient:
         _response = self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -183,8 +181,10 @@ class RunClient:
         _response = self._client_wrapper.httpx_client.request(
             method="GET",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/run/{jsonable_encoder(run_id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -225,7 +225,11 @@ class RunClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def update_status(
-        self, run_id: int, *, status: RunStatus, request_options: typing.Optional[RequestOptions] = None
+        self,
+        run_id: int,
+        *,
+        status: typing.Optional[RunStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Run:
         """
         Update the status of a run.
@@ -235,7 +239,7 @@ class RunClient:
         run_id : int
             The id of the run to update.
 
-        status : RunStatus
+        status : typing.Optional[RunStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -254,21 +258,25 @@ class RunClient:
         )
         client.run.update_status(
             run_id=1,
-            status="pending",
         )
         """
+        _request: typing.Dict[str, typing.Any] = {}
+        if status is not OMIT:
+            _request["status"] = status
         _response = self._client_wrapper.httpx_client.request(
             method="PATCH",
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/run/{jsonable_encoder(run_id)}/status"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
-            json=jsonable_encoder({"status": status})
+            json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
             else {
-                **jsonable_encoder({"status": status}),
+                **jsonable_encoder(_request),
                 **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
             },
             headers=jsonable_encoder(
@@ -363,12 +371,7 @@ class AsyncRunClient:
         client = AsyncScorecard(
             api_key="YOUR_API_KEY",
         )
-        await client.run.create(
-            testset_id=1,
-            status="RUNNING_EXECUTION",
-            model_params={"param1": "value1", "param2": "value2"},
-            metrics=[1, 2],
-        )
+        await client.run.create()
         """
         _request: typing.Dict[str, typing.Any] = {}
         if testset_id is not OMIT:
@@ -390,8 +393,10 @@ class AsyncRunClient:
         _response = await self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/run"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -468,8 +473,10 @@ class AsyncRunClient:
         _response = await self._client_wrapper.httpx_client.request(
             method="GET",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/run/{jsonable_encoder(run_id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -510,7 +517,11 @@ class AsyncRunClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update_status(
-        self, run_id: int, *, status: RunStatus, request_options: typing.Optional[RequestOptions] = None
+        self,
+        run_id: int,
+        *,
+        status: typing.Optional[RunStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Run:
         """
         Update the status of a run.
@@ -520,7 +531,7 @@ class AsyncRunClient:
         run_id : int
             The id of the run to update.
 
-        status : RunStatus
+        status : typing.Optional[RunStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -539,21 +550,25 @@ class AsyncRunClient:
         )
         await client.run.update_status(
             run_id=1,
-            status="pending",
         )
         """
+        _request: typing.Dict[str, typing.Any] = {}
+        if status is not OMIT:
+            _request["status"] = status
         _response = await self._client_wrapper.httpx_client.request(
             method="PATCH",
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/run/{jsonable_encoder(run_id)}/status"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
-            json=jsonable_encoder({"status": status})
+            json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
             else {
-                **jsonable_encoder({"status": status}),
+                **jsonable_encoder(_request),
                 **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
             },
             headers=jsonable_encoder(
