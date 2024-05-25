@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
+from ..core.query_encoder import encode_query
 from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
@@ -41,7 +42,11 @@ class PromptClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Prompt:
         """
-        Create a new prompt
+        Two types of prompts can be created - a root prompt or a child prompt (aka Prompt Version in app).
+
+                A root prompt can be created by providing the `name` param, and it will always be tagged as prod.
+
+                A child prompt can be created by providing the `parent_id` param. Note that the `name` param in this case will be ignored as all descendents from a root prompt would share the root's name. `is_prod` can also be provided to configure whether a child should be tagged as prod.
 
         Parameters
         ----------
@@ -73,7 +78,7 @@ class PromptClient:
             api_key="YOUR_API_KEY",
         )
         client.prompt.create(
-            prompt_template="You are a virtual assistant",
+            prompt_template="<system>\nYou are a helpful assistant. Use the provided context to answer the user's query.\n\nContext: {context}\n</system>\n\n<user>\n{user_query}\n</user>",
             name="Prompt Name",
             description="Description of the prompt",
             model_params={
@@ -98,8 +103,10 @@ class PromptClient:
         _response = self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -145,132 +152,6 @@ class PromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_roots(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Prompt]:
-        """
-        Retrieve active root prompts for the org
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import Scorecard
-
-        client = Scorecard(
-            api_key="YOUR_API_KEY",
-        )
-        client.prompt.get_roots()
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt/roots"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_prods(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Prompt]:
-        """
-        Retrieve prod prompts for the org
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import Scorecard
-
-        client = Scorecard(
-            api_key="YOUR_API_KEY",
-        )
-        client.prompt.get_prods()
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt/prods"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
         """
         Retrieve a prompt by id
@@ -302,8 +183,10 @@ class PromptClient:
         _response = self._client_wrapper.httpx_client.request(
             method="GET",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -343,23 +226,95 @@ class PromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def delete(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
+        """
+        Delete a root prompt and all of its children.
+
+        Parameters
+        ----------
+        id : str
+            The id of the root prompt to delete.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from scorecard.client import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.prompt.delete(
+            id="id",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            method="DELETE",
+            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
+            ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return typing.cast(typing.Any, construct_type(type_=typing.Any, object_=_response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(
+                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 403:
+            raise ForbiddenError(
+                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 404:
+            raise NotFoundError(
+                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 422:
+            raise UnprocessableEntityError(
+                typing.cast(HttpValidationError, construct_type(type_=HttpValidationError, object_=_response.json()))  # type: ignore
+            )
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     def update(
-        self,
-        id: str,
-        *,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_prod: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
+        self, id: str, *, is_prod: typing.Optional[bool] = OMIT, request_options: typing.Optional[RequestOptions] = None
     ) -> Prompt:
         """
-        Update a prompt
+        Update a prompt.
+
+                `is_prod` tags the provided prompt as the production prompt within the prompt graph.
 
         Parameters
         ----------
         id : str
             The id of the prompt to update.
-
-        is_archived : typing.Optional[bool]
 
         is_prod : typing.Optional[bool]
 
@@ -380,19 +335,19 @@ class PromptClient:
         )
         client.prompt.update(
             id="id",
-            is_archived=True,
+            is_prod=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
-        if is_archived is not OMIT:
-            _request["is_archived"] = is_archived
         if is_prod is not OMIT:
             _request["is_prod"] = is_prod
         _response = self._client_wrapper.httpx_client.request(
             method="PATCH",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -471,8 +426,10 @@ class PromptClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/name/{jsonable_encoder(name)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -512,80 +469,6 @@ class PromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_graph(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Prompt]:
-        """
-        Retrieve all nodes within the same graph as the prompt, sorted by created_at desc
-
-        Parameters
-        ----------
-        id : str
-            The id of the prompt.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import Scorecard
-
-        client = Scorecard(
-            api_key="YOUR_API_KEY",
-        )
-        client.prompt.get_graph(
-            id="id",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}/graph"
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 422:
-            raise UnprocessableEntityError(
-                typing.cast(HttpValidationError, construct_type(type_=HttpValidationError, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
 
 class AsyncPromptClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -603,7 +486,11 @@ class AsyncPromptClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Prompt:
         """
-        Create a new prompt
+        Two types of prompts can be created - a root prompt or a child prompt (aka Prompt Version in app).
+
+                A root prompt can be created by providing the `name` param, and it will always be tagged as prod.
+
+                A child prompt can be created by providing the `parent_id` param. Note that the `name` param in this case will be ignored as all descendents from a root prompt would share the root's name. `is_prod` can also be provided to configure whether a child should be tagged as prod.
 
         Parameters
         ----------
@@ -635,7 +522,7 @@ class AsyncPromptClient:
             api_key="YOUR_API_KEY",
         )
         await client.prompt.create(
-            prompt_template="You are a virtual assistant",
+            prompt_template="<system>\nYou are a helpful assistant. Use the provided context to answer the user's query.\n\nContext: {context}\n</system>\n\n<user>\n{user_query}\n</user>",
             name="Prompt Name",
             description="Description of the prompt",
             model_params={
@@ -660,8 +547,10 @@ class AsyncPromptClient:
         _response = await self._client_wrapper.httpx_client.request(
             method="POST",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -707,132 +596,6 @@ class AsyncPromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_roots(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Prompt]:
-        """
-        Retrieve active root prompts for the org
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import AsyncScorecard
-
-        client = AsyncScorecard(
-            api_key="YOUR_API_KEY",
-        )
-        await client.prompt.get_roots()
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt/roots"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_prods(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Prompt]:
-        """
-        Retrieve prod prompts for the org
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import AsyncScorecard
-
-        client = AsyncScorecard(
-            api_key="YOUR_API_KEY",
-        )
-        await client.prompt.get_prods()
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "v1/prompt/prods"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
         """
         Retrieve a prompt by id
@@ -864,8 +627,10 @@ class AsyncPromptClient:
         _response = await self._client_wrapper.httpx_client.request(
             method="GET",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -905,23 +670,95 @@ class AsyncPromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    async def delete(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
+        """
+        Delete a root prompt and all of its children.
+
+        Parameters
+        ----------
+        id : str
+            The id of the root prompt to delete.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from scorecard.client import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+        await client.prompt.delete(
+            id="id",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            method="DELETE",
+            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
+            ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return typing.cast(typing.Any, construct_type(type_=typing.Any, object_=_response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(
+                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 403:
+            raise ForbiddenError(
+                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 404:
+            raise NotFoundError(
+                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
+            )
+        if _response.status_code == 422:
+            raise UnprocessableEntityError(
+                typing.cast(HttpValidationError, construct_type(type_=HttpValidationError, object_=_response.json()))  # type: ignore
+            )
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def update(
-        self,
-        id: str,
-        *,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_prod: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
+        self, id: str, *, is_prod: typing.Optional[bool] = OMIT, request_options: typing.Optional[RequestOptions] = None
     ) -> Prompt:
         """
-        Update a prompt
+        Update a prompt.
+
+                `is_prod` tags the provided prompt as the production prompt within the prompt graph.
 
         Parameters
         ----------
         id : str
             The id of the prompt to update.
-
-        is_archived : typing.Optional[bool]
 
         is_prod : typing.Optional[bool]
 
@@ -942,19 +779,19 @@ class AsyncPromptClient:
         )
         await client.prompt.update(
             id="id",
-            is_archived=True,
+            is_prod=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
-        if is_archived is not OMIT:
-            _request["is_archived"] = is_archived
         if is_prod is not OMIT:
             _request["is_prod"] = is_prod
         _response = await self._client_wrapper.httpx_client.request(
             method="PATCH",
             url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -1033,8 +870,10 @@ class AsyncPromptClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/name/{jsonable_encoder(name)}"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -1052,82 +891,6 @@ class AsyncPromptClient:
         )
         if 200 <= _response.status_code < 300:
             return typing.cast(Prompt, construct_type(type_=Prompt, object_=_response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(
-                typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 403:
-            raise ForbiddenError(
-                typing.cast(UnauthorizedErrorBody, construct_type(type_=UnauthorizedErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 404:
-            raise NotFoundError(
-                typing.cast(NotFoundErrorBody, construct_type(type_=NotFoundErrorBody, object_=_response.json()))  # type: ignore
-            )
-        if _response.status_code == 422:
-            raise UnprocessableEntityError(
-                typing.cast(HttpValidationError, construct_type(type_=HttpValidationError, object_=_response.json()))  # type: ignore
-            )
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_graph(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[Prompt]:
-        """
-        Retrieve all nodes within the same graph as the prompt, sorted by created_at desc
-
-        Parameters
-        ----------
-        id : str
-            The id of the prompt.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[Prompt]
-            Successful Response
-
-        Examples
-        --------
-        from scorecard.client import AsyncScorecard
-
-        client = AsyncScorecard(
-            api_key="YOUR_API_KEY",
-        )
-        await client.prompt.get_graph(
-            id="id",
-        )
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"v1/prompt/{jsonable_encoder(id)}/graph"
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return typing.cast(typing.List[Prompt], construct_type(type_=typing.List[Prompt], object_=_response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(
                 typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore

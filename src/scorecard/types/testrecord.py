@@ -4,7 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from ..core.pydantic_utilities import pydantic_v1
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from ..core.unchecked_base_model import UncheckedBaseModel
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
 from .testrecord_custom_labels_value import TestrecordCustomLabelsValue
@@ -23,7 +23,6 @@ class Testrecord(UncheckedBaseModel):
     context: typing.Optional[str] = None
     model_response: typing.Optional[str] = None
     ideal: typing.Optional[str] = None
-    full_prompt: typing.Optional[str] = None
     custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomInputsValue]]] = None
     custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomLabelsValue]]] = None
     custom_outputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomOutputsValue]]] = None
@@ -37,8 +36,12 @@ class Testrecord(UncheckedBaseModel):
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True

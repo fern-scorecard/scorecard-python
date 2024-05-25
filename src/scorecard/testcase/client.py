@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
+from ..core.query_encoder import encode_query
 from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
@@ -17,6 +18,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from ..types.not_found_error_body import NotFoundErrorBody
 from ..types.test_case import TestCase
+from ..types.testcase_deletion_response import TestcaseDeletionResponse
 from ..types.unauthenticated_error import UnauthenticatedError
 from ..types.unauthorized_error_body import UnauthorizedErrorBody
 from .types.testcase_create_params_custom_inputs_value import TestcaseCreateParamsCustomInputsValue
@@ -34,7 +36,7 @@ class TestcaseClient:
         self,
         testset_id: int,
         *,
-        user_query: str,
+        user_query: typing.Optional[str] = OMIT,
         context: typing.Optional[str] = OMIT,
         ideal: typing.Optional[str] = OMIT,
         custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomInputsValue]]] = OMIT,
@@ -47,8 +49,10 @@ class TestcaseClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to create the Testcase in.
 
-        user_query : str
+        user_query : typing.Optional[str]
+            The user query to be executed.
 
         context : typing.Optional[str]
 
@@ -75,10 +79,11 @@ class TestcaseClient:
         )
         client.testcase.create(
             testset_id=1,
-            user_query="user_query",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"user_query": user_query}
+        _request: typing.Dict[str, typing.Any] = {}
+        if user_query is not OMIT:
+            _request["user_query"] = user_query
         if context is not OMIT:
             _request["context"] = context
         if ideal is not OMIT:
@@ -92,8 +97,10 @@ class TestcaseClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -148,8 +155,10 @@ class TestcaseClient:
         Parameters
         ----------
         testcase_id : int
+            The ID of the Testcase to retrieve.
 
         testset_id : int
+            The ID of the Testset to retrieve the Testcase from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -177,8 +186,10 @@ class TestcaseClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -220,22 +231,24 @@ class TestcaseClient:
 
     def delete(
         self, testcase_id: int, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
+    ) -> TestcaseDeletionResponse:
         """
         Delete a Testcase
 
         Parameters
         ----------
         testcase_id : int
+            The ID of the Testcase to delete.
 
         testset_id : int
+            The ID of the Testset to delete the Testcase from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Any
+        TestcaseDeletionResponse
             Successful Response
 
         Examples
@@ -256,9 +269,14 @@ class TestcaseClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
             headers=jsonable_encoder(
                 remove_none_from_dict(
                     {
@@ -274,7 +292,7 @@ class TestcaseClient:
             max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return typing.cast(typing.Any, construct_type(type_=typing.Any, object_=_response.json()))  # type: ignore
+            return typing.cast(TestcaseDeletionResponse, construct_type(type_=TestcaseDeletionResponse, object_=_response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(
                 typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore
@@ -306,7 +324,7 @@ class AsyncTestcaseClient:
         self,
         testset_id: int,
         *,
-        user_query: str,
+        user_query: typing.Optional[str] = OMIT,
         context: typing.Optional[str] = OMIT,
         ideal: typing.Optional[str] = OMIT,
         custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseCreateParamsCustomInputsValue]]] = OMIT,
@@ -319,8 +337,10 @@ class AsyncTestcaseClient:
         Parameters
         ----------
         testset_id : int
+            The ID of the Testset to create the Testcase in.
 
-        user_query : str
+        user_query : typing.Optional[str]
+            The user query to be executed.
 
         context : typing.Optional[str]
 
@@ -347,10 +367,11 @@ class AsyncTestcaseClient:
         )
         await client.testcase.create(
             testset_id=1,
-            user_query="user_query",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"user_query": user_query}
+        _request: typing.Dict[str, typing.Any] = {}
+        if user_query is not OMIT:
+            _request["user_query"] = user_query
         if context is not OMIT:
             _request["context"] = context
         if ideal is not OMIT:
@@ -364,8 +385,10 @@ class AsyncTestcaseClient:
             url=urllib.parse.urljoin(
                 f"{self._client_wrapper.get_base_url()}/", f"v1/testset/{jsonable_encoder(testset_id)}/testcase"
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -420,8 +443,10 @@ class AsyncTestcaseClient:
         Parameters
         ----------
         testcase_id : int
+            The ID of the Testcase to retrieve.
 
         testset_id : int
+            The ID of the Testset to retrieve the Testcase from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -449,8 +474,10 @@ class AsyncTestcaseClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             headers=jsonable_encoder(
                 remove_none_from_dict(
@@ -492,22 +519,24 @@ class AsyncTestcaseClient:
 
     async def delete(
         self, testcase_id: int, testset_id: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
+    ) -> TestcaseDeletionResponse:
         """
         Delete a Testcase
 
         Parameters
         ----------
         testcase_id : int
+            The ID of the Testcase to delete.
 
         testset_id : int
+            The ID of the Testset to delete the Testcase from.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Any
+        TestcaseDeletionResponse
             Successful Response
 
         Examples
@@ -528,9 +557,14 @@ class AsyncTestcaseClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
             headers=jsonable_encoder(
                 remove_none_from_dict(
                     {
@@ -546,7 +580,7 @@ class AsyncTestcaseClient:
             max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return typing.cast(typing.Any, construct_type(type_=typing.Any, object_=_response.json()))  # type: ignore
+            return typing.cast(TestcaseDeletionResponse, construct_type(type_=TestcaseDeletionResponse, object_=_response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(
                 typing.cast(UnauthenticatedError, construct_type(type_=UnauthenticatedError, object_=_response.json()))  # type: ignore

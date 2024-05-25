@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
+from ..core.query_encoder import encode_query
 from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
@@ -45,10 +46,13 @@ class ScoreClient:
         Parameters
         ----------
         run_id : int
+            The ID of the run that created the testrecord to be scored.
 
         testrecord_id : int
+            The ID of the testrecord to be scored.
 
         metric_id : int
+            The ID of the metric
 
         int_score : typing.Optional[int]
 
@@ -90,8 +94,10 @@ class ScoreClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}/score",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -154,10 +160,13 @@ class ScoreClient:
         Parameters
         ----------
         run_id : int
+            The run ID that created the test record to be scored.
 
         testrecord_id : int
+            The ID of the testrecord whose score will be updated.
 
         score_id : int
+            The ID of the score to be updated.
 
         int_score : typing.Optional[int]
 
@@ -199,8 +208,10 @@ class ScoreClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}/score/{jsonable_encoder(score_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -268,10 +279,13 @@ class AsyncScoreClient:
         Parameters
         ----------
         run_id : int
+            The ID of the run that created the testrecord to be scored.
 
         testrecord_id : int
+            The ID of the testrecord to be scored.
 
         metric_id : int
+            The ID of the metric
 
         int_score : typing.Optional[int]
 
@@ -313,8 +327,10 @@ class AsyncScoreClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}/score",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None
@@ -377,10 +393,13 @@ class AsyncScoreClient:
         Parameters
         ----------
         run_id : int
+            The run ID that created the test record to be scored.
 
         testrecord_id : int
+            The ID of the testrecord whose score will be updated.
 
         score_id : int
+            The ID of the score to be updated.
 
         int_score : typing.Optional[int]
 
@@ -422,8 +441,10 @@ class AsyncScoreClient:
                 f"{self._client_wrapper.get_base_url()}/",
                 f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}/score/{jsonable_encoder(score_id)}",
             ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
+            params=encode_query(
+                jsonable_encoder(
+                    request_options.get("additional_query_parameters") if request_options is not None else None
+                )
             ),
             json=jsonable_encoder(_request)
             if request_options is None or request_options.get("additional_body_parameters") is None

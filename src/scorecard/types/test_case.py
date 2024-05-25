@@ -4,7 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from ..core.pydantic_utilities import pydantic_v1
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from ..core.unchecked_base_model import UncheckedBaseModel
 from .test_case_custom_inputs_value import TestCaseCustomInputsValue
 from .test_case_custom_labels_value import TestCaseCustomLabelsValue
@@ -13,8 +13,16 @@ from .test_case_custom_labels_value import TestCaseCustomLabelsValue
 class TestCase(UncheckedBaseModel):
     id: typing.Optional[int] = None
     created_at: typing.Optional[dt.datetime] = None
-    testset_id: int
-    user_query: str
+    testset_id: int = pydantic_v1.Field()
+    """
+    The ID of the testset the testcase belongs to.
+    """
+
+    user_query: str = pydantic_v1.Field()
+    """
+    The user query for the testcase.
+    """
+
     context: typing.Optional[str] = None
     ideal: typing.Optional[str] = None
     custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestCaseCustomInputsValue]]] = None
@@ -25,8 +33,12 @@ class TestCase(UncheckedBaseModel):
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True

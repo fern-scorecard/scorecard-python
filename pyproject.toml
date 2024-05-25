@@ -1,13 +1,34 @@
 [tool.poetry]
 name = "scorecard-ai"
-version = "v1.0.0-beta2"
-license = "Apache-2.0"
+version = "v1.0.0-beta3"
 description = ""
 readme = "README.md"
 authors = []
+keywords = []
+
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
+]
 packages = [
     { include = "scorecard", from = "src"}
 ]
+
+[project.urls]
+Repository = 'https://github.com/scorecard-ai/scorecard-python'
 
 [tool.poetry.dependencies]
 python = "<3.13,>=3.9"

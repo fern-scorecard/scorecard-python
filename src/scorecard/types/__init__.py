@@ -27,6 +27,7 @@ from .test_case_custom_inputs_value import TestCaseCustomInputsValue
 from .test_case_custom_labels_value import TestCaseCustomLabelsValue
 from .test_record_create import TestRecordCreate
 from .test_set_create import TestSetCreate
+from .testcase_deletion_response import TestcaseDeletionResponse
 from .testrecord import Testrecord
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
 from .testrecord_custom_labels_value import TestrecordCustomLabelsValue
@@ -68,6 +69,7 @@ __all__ = [
     "TestCaseCustomLabelsValue",
     "TestRecordCreate",
     "TestSetCreate",
+    "TestcaseDeletionResponse",
     "Testrecord",
     "TestrecordCustomInputsValue",
     "TestrecordCustomLabelsValue",

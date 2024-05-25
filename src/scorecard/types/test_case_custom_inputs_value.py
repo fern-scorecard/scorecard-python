@@ -5,4 +5,4 @@ import typing
 from .file_url import FileUrl
 from .json_object import JsonObject
 
-TestCaseCustomInputsValue = typing.Union[str, FileUrl, JsonObject]
+TestCaseCustomInputsValue = typing.Union[FileUrl, JsonObject, str, int, float, bool]
