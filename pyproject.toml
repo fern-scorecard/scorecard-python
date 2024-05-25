@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "scorecard-ai"
 version = "v1.0.0-beta3"
+license = "Apache-2.0"
 description = ""
 readme = "README.md"
 authors = []
