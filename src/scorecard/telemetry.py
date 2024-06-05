@@ -1,3 +1,13 @@
+from importlib.metadata import metadata
+import sys
+
+available_extras = "".join(
+    map(
+        lambda extra: f"- {extra}\n", metadata("scorecard-ai").get_all("Provides-Extra")
+    )
+)
+
+
 # pylint: disable=import-outside-toplevel
 def setup(name, scorecard_config, debug=False):
     """
@@ -13,47 +23,66 @@ def setup(name, scorecard_config, debug=False):
 
     try:
         from opentelemetry import trace
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+            OTLPSpanExporter,
+        )
         from opentelemetry.sdk.resources import SERVICE_NAME, Resource
         from opentelemetry.sdk.trace import TracerProvider
-        from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-    except ImportError as e:
-        print(e)
+        from opentelemetry.sdk.trace.export import (
+            BatchSpanProcessor,
+            ConsoleSpanExporter,
+        )
+    except ModuleNotFoundError as e:
+        if e.name == "opentelemetry":
+            print(
+                f'In order to use Scorecard telemetry, be sure to install the correct PEP 508 extras. For example:\n\npip install scorecard-ai[telemetry,instrument-openai]\npoetry add scorecard-ai --extras "telemetry instrument-openai"\n\nAvailable extras:\n{available_extras}'
+            )
+
+        output_exception = ModuleNotFoundError(name="scorecard-ai[telemetry]")
+        output_exception.msg = f"{output_exception.name} not installed."
+        sys.tracebacklimit = 0
+        raise output_exception from None
 
     try:
         from openinference.instrumentation.bedrock import BedrockInstrumentor
+
         BedrockInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     try:
         from openinference.instrumentation.dspy import DSPyInstrumentor
+
         DSPyInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     try:
         from openinference.instrumentation.langchain import LangChainInstrumentor
+
         LangChainInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     try:
         from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
+
         LlamaIndexInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     try:
         from openinference.instrumentation.mistralai import MistralAIInstrumentor
+
         MistralAIInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     try:
         from openinference.instrumentation.openai import OpenAIInstrumentor
+
         OpenAIInstrumentor().instrument()
-    except ImportError:
+    except ModuleNotFoundError:
         pass
 
     provider = TracerProvider(resource=Resource(attributes={SERVICE_NAME: name}))
@@ -66,6 +95,7 @@ def setup(name, scorecard_config, debug=False):
 
     # Export the trace to the Scorecard Telemetry server.
     from urllib.parse import urljoin
+
     base = scorecard_config.telemetry_url or "https://telemetry.getscorecard.ai"
     otlp_exporter = OTLPSpanExporter(
         endpoint=urljoin(base, "/v1/traces"),
