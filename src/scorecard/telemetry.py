@@ -1,12 +1,6 @@
 from importlib.metadata import metadata
 import sys
 
-available_extras = "".join(
-    map(
-        lambda extra: f"- {extra}\n", metadata("scorecard-ai").get_all("Provides-Extra")
-    )
-)
-
 
 # pylint: disable=import-outside-toplevel
 def setup(name, scorecard_config, debug=False):
@@ -32,11 +26,18 @@ def setup(name, scorecard_config, debug=False):
             BatchSpanProcessor,
             ConsoleSpanExporter,
         )
-    except ModuleNotFoundError as e:
-        if e.name == "opentelemetry":
-            print(
-                f'In order to use Scorecard telemetry, be sure to install the correct PEP 508 extras. For example:\n\npip install scorecard-ai[telemetry,instrument-openai]\npoetry add scorecard-ai --extras "telemetry instrument-openai"\n\nAvailable extras:\n{available_extras}'
+    except ModuleNotFoundError:
+        available_extras = metadata("scorecard-ai").get_all("Provides-Extra")
+        output_string = ""
+        if available_extras is not None:
+            available_extras = "".join(
+                map(lambda extra: f"- {extra}\n", available_extras)
             )
+            output_string = f"\n\nAvailable extras:\n{available_extras}"
+
+        print(
+            f'In order to use Scorecard telemetry, be sure to install the correct PEP 508 extras. For example:\n\npip install scorecard-ai[telemetry,instrument-openai]\npoetry add scorecard-ai --extras "telemetry instrument-openai"{output_string}'
+        )
 
         output_exception = ModuleNotFoundError(name="scorecard-ai[telemetry]")
         output_exception.msg = f"{output_exception.name} not installed."
