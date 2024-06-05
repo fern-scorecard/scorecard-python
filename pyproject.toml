@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scorecard-ai"
-version = "v1.0.0-beta4"
+version = "v1.0.0-beta5"
 description = ""
 readme = "README.md"
 authors = []
@@ -63,7 +63,6 @@ testpaths = [ "tests" ]
 asyncio_mode = "auto"
 
 [tool.mypy]
-ignore_missing_imports = true
 plugins = ["pydantic.mypy"]
 
 
@@ -76,6 +75,6 @@ telemetry=["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opent
 instrument-bedrock=["boto3", "openinference-instrumentation-bedrock"]
 instrument-dspy=["dspy-ai", "openinference-instrumentation-dspy"]
 instrument-langchain=["langchain", "openinference-instrumentation-langchain"]
-instrument-llama-index=["openinference-instrumentation-llama-index"]
+instrument-llama-index=["llama-index", "openinference-instrumentation-llama-index"]
 instrument-mistralai=["mistralai", "openinference-instrumentation-mistralai"]
 instrument-openai=["openai", "openinference-instrumentation-openai"]

@@ -3580,7 +3580,7 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 instrument-bedrock = ["boto3", "openinference-instrumentation-bedrock"]
 instrument-dspy = ["dspy-ai", "openinference-instrumentation-dspy"]
 instrument-langchain = ["langchain", "openinference-instrumentation-langchain"]
-instrument-llama-index = ["openinference-instrumentation-llama-index"]
+instrument-llama-index = ["llama-index", "openinference-instrumentation-llama-index"]
 instrument-mistralai = ["mistralai", "openinference-instrumentation-mistralai"]
 instrument-openai = ["openai", "openinference-instrumentation-openai"]
 telemetry = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-sdk"]
@@ -3588,4 +3588,4 @@ telemetry = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "ope
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.9"
-content-hash = "d6aef400c5c0517757c480871725c3dbf718b62a65d21c46285702b3851e71fb"
+content-hash = "b63e1617a80f9e6023df13347d472ebd040ec5d172782e438c6d55874c02cbf6"
