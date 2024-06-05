@@ -17,43 +17,43 @@ def setup(name, scorecard_config, debug=False):
         from opentelemetry.sdk.resources import SERVICE_NAME, Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-    except ModuleNotFoundError as e:
+    except ImportError as e:
         print(e)
 
     try:
         from openinference.instrumentation.bedrock import BedrockInstrumentor
         BedrockInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     try:
         from openinference.instrumentation.dspy import DSPyInstrumentor
         DSPyInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     try:
         from openinference.instrumentation.langchain import LangChainInstrumentor
         LangChainInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     try:
         from openinference.instrumentation.llama_index import LlamaIndexInstrumentor
         LlamaIndexInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     try:
         from openinference.instrumentation.mistralai import MistralAIInstrumentor
         MistralAIInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     try:
         from openinference.instrumentation.openai import OpenAIInstrumentor
         OpenAIInstrumentor().instrument()
-    except ModuleNotFoundError:
+    except ImportError:
         pass
 
     provider = TracerProvider(resource=Resource(attributes={SERVICE_NAME: name}))
