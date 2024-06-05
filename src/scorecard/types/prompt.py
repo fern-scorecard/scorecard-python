@@ -10,8 +10,16 @@ from .prompt_model_params_value import PromptModelParamsValue
 
 
 class Prompt(UncheckedBaseModel):
-    org_id: typing.Optional[str] = None
-    user_id: typing.Optional[str] = None
+    org_id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The organization this resource belongs to.
+    """
+
+    user_id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The user this record belongs to.
+    """
+
     id: typing.Optional[str] = None
     name: typing.Optional[str] = None
     description: typing.Optional[str] = None

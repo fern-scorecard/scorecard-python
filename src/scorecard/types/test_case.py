@@ -11,8 +11,16 @@ from .test_case_custom_labels_value import TestCaseCustomLabelsValue
 
 
 class TestCase(UncheckedBaseModel):
-    id: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
+    id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the testcase.
+    """
+
+    created_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The creation date and time of the testcase.
+    """
+
     testset_id: int = pydantic_v1.Field()
     """
     The ID of the testset the testcase belongs to.
@@ -23,8 +31,16 @@ class TestCase(UncheckedBaseModel):
     The user query for the testcase.
     """
 
-    context: typing.Optional[str] = None
-    ideal: typing.Optional[str] = None
+    context: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The context for the testcase.
+    """
+
+    ideal: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The ideal response for the testcase.
+    """
+
     custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestCaseCustomInputsValue]]] = None
     custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestCaseCustomLabelsValue]]] = None
 

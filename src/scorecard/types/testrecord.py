@@ -15,21 +15,72 @@ from .testrecord_model_params_value import TestrecordModelParamsValue
 
 class Testrecord(UncheckedBaseModel):
     id: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
-    run_id: typing.Optional[int] = None
-    testset_id: typing.Optional[int] = None
-    testcase_id: typing.Optional[int] = None
-    user_query: typing.Optional[str] = None
-    context: typing.Optional[str] = None
-    model_response: typing.Optional[str] = None
-    ideal: typing.Optional[str] = None
+    created_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The creation date and time of the testrecord.
+    """
+
+    run_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the run the testrecord belongs to.
+    """
+
+    testset_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the testset the testrecord belongs to.
+    """
+
+    testcase_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the testcase the testrecord belongs to.
+    """
+
+    user_query: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The user query for the testrecord.
+    """
+
+    context: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The context for the testrecord.
+    """
+
+    model_response: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The actual response of the model for the testrecord.
+    """
+
+    ideal: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The ideal response for the testrecord.
+    """
+
     custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomInputsValue]]] = None
     custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomLabelsValue]]] = None
     custom_outputs: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCustomOutputsValue]]] = None
-    status: typing.Optional[str] = None
-    prompt: typing.Optional[str] = None
-    model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordModelParamsValue]]] = None
-    model_debug_info: typing.Optional[typing.Dict[str, typing.Optional[TestrecordModelDebugInfoValue]]] = None
+    status: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The current status of the testrecord.
+    """
+
+    prompt: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The prompt used to generate the testrecord.
+    """
+
+    model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordModelParamsValue]]] = pydantic_v1.Field(
+        default=None
+    )
+    """
+    The model parameters used when generating the testrecord.
+    """
+
+    model_debug_info: typing.Optional[
+        typing.Dict[str, typing.Optional[TestrecordModelDebugInfoValue]]
+    ] = pydantic_v1.Field(default=None)
+    """
+    Debug information produced during the testrecord's generation.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

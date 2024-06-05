@@ -10,20 +10,75 @@ from ..core.unchecked_base_model import UncheckedBaseModel
 
 class Run(UncheckedBaseModel):
     id: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
-    updated_at: typing.Optional[dt.datetime] = None
-    execution_start_time: typing.Optional[dt.datetime] = None
-    execution_end_time: typing.Optional[dt.datetime] = None
-    testset_id: typing.Optional[int] = None
-    status: typing.Optional[str] = None
-    limit_testcases: typing.Optional[int] = None
-    source: typing.Optional[str] = None
-    model_params: typing.Optional[typing.Dict[str, typing.Any]] = None
-    notes: typing.Optional[str] = None
-    scoring_config_id: typing.Optional[int] = None
-    prompt_template: typing.Optional[str] = None
-    scoring_start_time: typing.Optional[dt.datetime] = None
-    scoring_end_time: typing.Optional[dt.datetime] = None
+    created_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The creation date and time of the run.
+    """
+
+    updated_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The last time the run was updated.
+    """
+
+    execution_start_time: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The start time of the run.
+    """
+
+    execution_end_time: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The end time of the run.
+    """
+
+    testset_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The testset that was executed in this run.
+    """
+
+    status: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The current status of the run.
+    """
+
+    limit_testcases: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The maximum number of testcases to run.
+    """
+
+    source: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    How the run was created.
+    """
+
+    model_params: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
+    """
+    The model parameters used when generating the run.
+    """
+
+    notes: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Notes about the run.
+    """
+
+    scoring_config_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the scoring configuration the run uses.
+    """
+
+    prompt_template: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The prompt template to be used while executing the run.
+    """
+
+    scoring_start_time: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The start time of scoring the run's results.
+    """
+
+    scoring_end_time: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The end time of scoring the run's results.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

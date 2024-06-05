@@ -10,17 +10,61 @@ from .custom_schema import CustomSchema
 
 
 class Testset(UncheckedBaseModel):
-    id: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
-    name: typing.Optional[str] = None
-    description: typing.Optional[str] = None
-    using_retrieval: typing.Optional[bool] = None
-    ingestion_method: typing.Optional[str] = None
-    num_testcases: typing.Optional[int] = None
-    published: typing.Optional[bool] = None
-    updated_at: typing.Optional[dt.datetime] = None
-    is_archived: typing.Optional[bool] = None
-    project_id: typing.Optional[int] = None
+    id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the testset.
+    """
+
+    created_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The creation date and time of the testset.
+    """
+
+    name: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    A human-readable name for the testset. This will be displayed in the UI.
+    """
+
+    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    A description for the testset.
+    """
+
+    using_retrieval: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether or not the testset uses retrieval.
+    """
+
+    ingestion_method: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The method used to ingest the testset.
+    """
+
+    num_testcases: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The number of testcases in the testset.
+    """
+
+    published: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether or not the testset is published.
+    """
+
+    updated_at: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    """
+    The last time the testset was updated.
+    """
+
+    is_archived: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether or not the testset is archived.
+    """
+
+    project_id: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The ID of the project the testset belongs to.
+    """
+
     custom_schema: typing.Optional[CustomSchema] = None
 
     def json(self, **kwargs: typing.Any) -> str:

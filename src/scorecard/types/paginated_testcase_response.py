@@ -11,8 +11,16 @@ from .test_case import TestCase
 
 class PaginatedTestcaseResponse(UncheckedBaseModel):
     count: int
-    next: typing.Optional[str] = None
-    previous: typing.Optional[str] = None
+    next: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The URL to fetch the next page of testcases.
+    """
+
+    previous: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The URL to fetch the previous page of testcases.
+    """
+
     results: typing.List[TestCase] = pydantic_v1.Field()
     """
     The list of Testcases retrieved in this page.
