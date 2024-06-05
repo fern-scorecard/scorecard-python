@@ -96,7 +96,7 @@ def setup(name, scorecard_config, debug=False):
     # Export the trace to the Scorecard Telemetry server.
     from urllib.parse import urljoin
 
-    base = scorecard_config.telemetry_url or "https://telemetry.getscorecard.ai"
+    base = scorecard_config.telemetry_url or "https://telemetry.getscorecard.ai:4318"
     otlp_exporter = OTLPSpanExporter(
         endpoint=urljoin(base, "/v1/traces"),
         headers={"Authorization": f"Bearer {scorecard_config.telemetry_key}"},
