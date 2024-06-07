@@ -2,6 +2,7 @@
 
 README.md
 LICENSE
+mypy.ini
 src/scorecard/client.py
 src/scorecard/telemetry.py
 .github/workflows/ci.yml

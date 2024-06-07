@@ -63,7 +63,6 @@ testpaths = [ "tests" ]
 asyncio_mode = "auto"
 
 [tool.mypy]
-ignore_missing_imports = true
 plugins = ["pydantic.mypy"]
 
 
