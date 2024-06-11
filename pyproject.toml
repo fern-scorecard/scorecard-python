@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scorecard-ai"
-version = "v1.0.0-beta5"
+version = "v1.0.0-beta6"
 description = ""
 readme = "README.md"
 authors = []
@@ -53,13 +53,13 @@ typing_extensions = ">= 4.0.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "1.9.0"
-opentelemetry-api = "^1.24.0"
-opentelemetry-exporter-otlp-proto-http = "^1.24.0"
-opentelemetry-sdk = "^1.24.0"
 pytest = "^7.4.0"
 pytest-asyncio = "^0.23.5"
 python-dateutil = "^2.9.0"
 types-python-dateutil = "^2.9.0.20240316"
+opentelemetry-api = "^1.24.0"
+opentelemetry-exporter-otlp-proto-http = "^1.24.0"
+opentelemetry-sdk = "^1.24.0"
 
 [tool.pytest.ini_options]
 testpaths = [ "tests" ]
