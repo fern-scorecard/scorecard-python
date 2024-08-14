@@ -2,4 +2,4 @@
 
 import typing
 
-CreateGithubWorkflowParams = typing.Any
+CreateGithubWorkflowParams = typing.Optional[typing.Any]

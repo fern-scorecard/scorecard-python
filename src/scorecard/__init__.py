@@ -44,6 +44,7 @@ from .types import (
 )
 from .errors import ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableEntityError
 from . import prompt, run, run_metric, score, testcase, testrecord, testset, traces
+from .client import AsyncScorecard, Scorecard
 from .environment import ScorecardEnvironment
 from .prompt import PromptCreateParamsModelParamsValue
 from .testcase import TestcaseCreateParamsCustomInputsValue, TestcaseCreateParamsCustomLabelsValue
@@ -57,6 +58,7 @@ from .testrecord import (
 from .version import __version__
 
 __all__ = [
+    "AsyncScorecard",
     "CreateGithubWorkflowParams",
     "CreateRunParams",
     "CustomSchema",
@@ -80,6 +82,7 @@ __all__ = [
     "RunMetric",
     "RunStatus",
     "ScoreStatus",
+    "Scorecard",
     "ScorecardEnvironment",
     "Span",
     "TestCase",

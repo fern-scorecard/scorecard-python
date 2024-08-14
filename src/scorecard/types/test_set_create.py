@@ -2,4 +2,4 @@
 
 import typing
 
-TestSetCreate = typing.Any
+TestSetCreate = typing.Optional[typing.Any]

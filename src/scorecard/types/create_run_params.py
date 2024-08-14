@@ -2,4 +2,4 @@
 
 import typing
 
-CreateRunParams = typing.Any
+CreateRunParams = typing.Optional[typing.Any]

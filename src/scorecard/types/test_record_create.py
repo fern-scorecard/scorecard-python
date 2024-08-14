@@ -2,4 +2,4 @@
 
 import typing
 
-TestRecordCreate = typing.Any
+TestRecordCreate = typing.Optional[typing.Any]
