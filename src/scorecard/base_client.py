@@ -12,8 +12,9 @@ from .testrecord.client import TestrecordClient
 from .run.client import RunClient
 from .score.client import ScoreClient
 from .run_metric.client import RunMetricClient
-from .traces.client import TracesClient
+from .tracing.client import TracingClient
 from .prompt.client import PromptClient
+from .scoring_config.client import ScoringConfigClient
 from .core.client_wrapper import AsyncClientWrapper
 from .testset.client import AsyncTestsetClient
 from .testcase.client import AsyncTestcaseClient
@@ -21,8 +22,9 @@ from .testrecord.client import AsyncTestrecordClient
 from .run.client import AsyncRunClient
 from .score.client import AsyncScoreClient
 from .run_metric.client import AsyncRunMetricClient
-from .traces.client import AsyncTracesClient
+from .tracing.client import AsyncTracingClient
 from .prompt.client import AsyncPromptClient
+from .scoring_config.client import AsyncScoringConfigClient
 
 
 class BaseScorecard:
@@ -93,8 +95,9 @@ class BaseScorecard:
         self.run = RunClient(client_wrapper=self._client_wrapper)
         self.score = ScoreClient(client_wrapper=self._client_wrapper)
         self.run_metric = RunMetricClient(client_wrapper=self._client_wrapper)
-        self.traces = TracesClient(client_wrapper=self._client_wrapper)
+        self.tracing = TracingClient(client_wrapper=self._client_wrapper)
         self.prompt = PromptClient(client_wrapper=self._client_wrapper)
+        self.scoring_config = ScoringConfigClient(client_wrapper=self._client_wrapper)
 
 
 class AsyncBaseScorecard:
@@ -165,8 +168,9 @@ class AsyncBaseScorecard:
         self.run = AsyncRunClient(client_wrapper=self._client_wrapper)
         self.score = AsyncScoreClient(client_wrapper=self._client_wrapper)
         self.run_metric = AsyncRunMetricClient(client_wrapper=self._client_wrapper)
-        self.traces = AsyncTracesClient(client_wrapper=self._client_wrapper)
+        self.tracing = AsyncTracingClient(client_wrapper=self._client_wrapper)
         self.prompt = AsyncPromptClient(client_wrapper=self._client_wrapper)
+        self.scoring_config = AsyncScoringConfigClient(client_wrapper=self._client_wrapper)
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: ScorecardEnvironment) -> str:

@@ -2,7 +2,6 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from .types.prompt_create_params_model_params_value import PromptCreateParamsModelParamsValue
 from ..core.request_options import RequestOptions
 from ..types.prompt import Prompt
 from ..core.unchecked_base_model import construct_type
@@ -16,6 +15,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
+from .types.prompt_create_params_model_params_value import PromptCreateParamsModelParamsValue
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.client_wrapper import AsyncClientWrapper
 
@@ -26,6 +26,96 @@ OMIT = typing.cast(typing.Any, ...)
 class PromptClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def get_by_name(self, *, name: str, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
+        """
+        Retrieve a prod prompt by name
+
+        Parameters
+        ----------
+        name : str
+            Name of the prompt.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Prompt
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.prompt.get_by_name(
+            name="name",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "v1/prompt",
+            method="GET",
+            params={
+                "name": name,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    Prompt,
+                    construct_type(
+                        type_=Prompt,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def create(
         self,
@@ -245,12 +335,12 @@ class PromptClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
-        Delete a root prompt and all of its children.
+        Delete a scoring config.
 
         Parameters
         ----------
         id : str
-            The id of the root prompt to delete.
+            The id of the scoring config to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -272,7 +362,7 @@ class PromptClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"v1/prompt/{jsonable_encoder(id)}",
+            f"v1/scoring_config/{jsonable_encoder(id)}",
             method="DELETE",
             request_options=request_options,
         )
@@ -428,7 +518,12 @@ class PromptClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_by_name(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
+
+class AsyncPromptClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+
+    async def get_by_name(self, *, name: str, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
         """
         Retrieve a prod prompt by name
 
@@ -447,18 +542,29 @@ class PromptClient:
 
         Examples
         --------
-        from scorecard import Scorecard
+        import asyncio
 
-        client = Scorecard(
+        from scorecard import AsyncScorecard
+
+        client = AsyncScorecard(
             api_key="YOUR_API_KEY",
         )
-        client.prompt.get_by_name(
-            name="name",
-        )
+
+
+        async def main() -> None:
+            await client.prompt.get_by_name(
+                name="name",
+            )
+
+
+        asyncio.run(main())
         """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/prompt/name/{jsonable_encoder(name)}",
+        _response = await self._client_wrapper.httpx_client.request(
+            "v1/prompt",
             method="GET",
+            params={
+                "name": name,
+            },
             request_options=request_options,
         )
         try:
@@ -514,11 +620,6 @@ class PromptClient:
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
-
-
-class AsyncPromptClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
 
     async def create(
         self,
@@ -754,12 +855,12 @@ class AsyncPromptClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[typing.Any]:
         """
-        Delete a root prompt and all of its children.
+        Delete a scoring config.
 
         Parameters
         ----------
         id : str
-            The id of the root prompt to delete.
+            The id of the scoring config to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -789,7 +890,7 @@ class AsyncPromptClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"v1/prompt/{jsonable_encoder(id)}",
+            f"v1/scoring_config/{jsonable_encoder(id)}",
             method="DELETE",
             request_options=request_options,
         )
@@ -898,101 +999,6 @@ class AsyncPromptClient:
             },
             request_options=request_options,
             omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    Prompt,
-                    construct_type(
-                        type_=Prompt,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        UnauthenticatedError,
-                        construct_type(
-                            type_=UnauthenticatedError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        UnauthorizedErrorBody,
-                        construct_type(
-                            type_=UnauthorizedErrorBody,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        NotFoundErrorBody,
-                        construct_type(
-                            type_=NotFoundErrorBody,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        construct_type(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_by_name(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> Prompt:
-        """
-        Retrieve a prod prompt by name
-
-        Parameters
-        ----------
-        name : str
-            Name of the prompt.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        Prompt
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from scorecard import AsyncScorecard
-
-        client = AsyncScorecard(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.prompt.get_by_name(
-                name="name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"v1/prompt/name/{jsonable_encoder(name)}",
-            method="GET",
-            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:

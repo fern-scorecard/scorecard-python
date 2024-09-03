@@ -20,13 +20,14 @@ from .run import Run
 from .run_metric import RunMetric
 from .run_status import RunStatus
 from .score_status import ScoreStatus
+from .scoring_config import ScoringConfig
 from .span import Span
 from .test_case import TestCase
-from .test_case_create import TestCaseCreate
 from .test_case_custom_inputs_value import TestCaseCustomInputsValue
 from .test_case_custom_labels_value import TestCaseCustomLabelsValue
 from .test_record_create import TestRecordCreate
 from .test_set_create import TestSetCreate
+from .testcase_batch_deletion_response import TestcaseBatchDeletionResponse
 from .testcase_deletion_response import TestcaseDeletionResponse
 from .testrecord import Testrecord
 from .testrecord_custom_inputs_value import TestrecordCustomInputsValue
@@ -62,13 +63,14 @@ __all__ = [
     "RunMetric",
     "RunStatus",
     "ScoreStatus",
+    "ScoringConfig",
     "Span",
     "TestCase",
-    "TestCaseCreate",
     "TestCaseCustomInputsValue",
     "TestCaseCustomLabelsValue",
     "TestRecordCreate",
     "TestSetCreate",
+    "TestcaseBatchDeletionResponse",
     "TestcaseDeletionResponse",
     "Testrecord",
     "TestrecordCustomInputsValue",

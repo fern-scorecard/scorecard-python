@@ -81,6 +81,11 @@ class Testrecord(UncheckedBaseModel):
     Debug information produced during the testrecord's generation.
     """
 
+    error_message: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The error message for the testrecord.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

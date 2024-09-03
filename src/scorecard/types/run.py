@@ -61,7 +61,7 @@ class Run(UncheckedBaseModel):
 
     scoring_config_id: typing.Optional[int] = pydantic.Field(default=None)
     """
-    The ID of the Scoring Config the run uses.
+    The ID of the scoring configuration the run uses.
     """
 
     prompt_template: typing.Optional[str] = pydantic.Field(default=None)
