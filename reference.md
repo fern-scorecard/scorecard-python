@@ -140,6 +140,108 @@ client.testset.delete(
 </dl>
 </details>
 
+<details><summary><code>client.testset.<a href="src/scorecard/testset/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a Testset.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.testset.update(
+    testset_id=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**testset_id:** `int` — The ID of the Testset to update.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — A description for the testset.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**using_retrieval:** `typing.Optional[bool]` — Whether or not the testset uses retrieval.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**custom_schema:** `typing.Optional[CustomSchema]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.testset.<a href="src/scorecard/testset/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
@@ -663,6 +765,285 @@ client.testcase.delete(
 </dl>
 </details>
 
+<details><summary><code>client.testcase.<a href="src/scorecard/testcase/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a Testcase.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.testcase.update(
+    testcase_id=1,
+    testset_id=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**testcase_id:** `int` — The ID of the Testcase to update.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**testset_id:** `int` — The ID of the Testset to retrieve the Testcase from.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user_query:** `typing.Optional[str]` — The user query to be executed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**context:** `typing.Optional[str]` — The context to be used while generating the testcase.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ideal:** `typing.Optional[str]` — The ideal response to the user query.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**custom_inputs:** `typing.Optional[
+    typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomInputsValue]]
+]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**custom_labels:** `typing.Optional[
+    typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomLabelsValue]]
+]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.testcase.<a href="src/scorecard/testcase/client.py">batch_copy</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Batch copy Testcases
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.testcase.batch_copy(
+    testset_id=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**testset_id:** `int` — The ID of the Testset to create the Testcase in.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ids:** `typing.Optional[typing.Sequence[int]]` — List of Testcase IDs to copy.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.testcase.<a href="src/scorecard/testcase/client.py">batch_delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Batch delete Testcases
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.testcase.batch_delete(
+    testset_id=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**testset_id:** `int` — The ID of the Testset from which the Testcases will be deleted.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ids:** `typing.Optional[typing.Sequence[int]]` — List of Testcase IDs to delete.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Testrecord
 <details><summary><code>client.testrecord.<a href="src/scorecard/testrecord/client.py">get</a>(...)</code></summary>
 <dl>
@@ -900,6 +1281,14 @@ client.testrecord.create(
 **model_debug_info:** `typing.Optional[
     typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]
 ]` — Debug information generated by Scorecard during the execution of the testrecord.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**error_message:** `typing.Optional[str]` — The error message for the testrecord.
     
 </dd>
 </dl>
@@ -1488,8 +1877,8 @@ client.run_metric.get(
 </dl>
 </details>
 
-## Traces
-<details><summary><code>client.traces.<a href="src/scorecard/traces/client.py">get</a>(...)</code></summary>
+## Tracing
+<details><summary><code>client.tracing.<a href="src/scorecard/tracing/client.py">traces</a>()</code></summary>
 <dl>
 <dd>
 
@@ -1501,7 +1890,7 @@ client.run_metric.get(
 <dl>
 <dd>
 
-Retrieve trace spans
+Retrieve traces
 </dd>
 </dl>
 </dd>
@@ -1521,7 +1910,67 @@ from scorecard import Scorecard
 client = Scorecard(
     api_key="YOUR_API_KEY",
 )
-client.traces.get(
+client.tracing.traces()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tracing.<a href="src/scorecard/tracing/client.py">trace</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve specified trace
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.tracing.trace(
     trace_id="trace_id",
 )
 
@@ -1559,7 +2008,156 @@ client.traces.get(
 </dl>
 </details>
 
+<details><summary><code>client.tracing.<a href="src/scorecard/tracing/client.py">span</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve specified span
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.tracing.span(
+    trace_id="trace_id",
+    span_id="span_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**trace_id:** `str` — The ID of the trace which the span is a part of.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**span_id:** `str` — The ID of the span to retrieve.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Prompt
+<details><summary><code>client.prompt.<a href="src/scorecard/prompt/client.py">get_by_name</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a prod prompt by name
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.prompt.get_by_name(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — Name of the prompt.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.prompt.<a href="src/scorecard/prompt/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
@@ -1767,7 +2365,7 @@ client.prompt.get(
 <dl>
 <dd>
 
-Delete a root prompt and all of its children.
+Delete a scoring config.
 </dd>
 </dl>
 </dd>
@@ -1805,7 +2403,7 @@ client.prompt.delete(
 <dl>
 <dd>
 
-**id:** `str` — The id of the root prompt to delete.
+**id:** `str` — The id of the scoring config to delete.
     
 </dd>
 </dl>
@@ -1906,7 +2504,8 @@ client.prompt.update(
 </dl>
 </details>
 
-<details><summary><code>client.prompt.<a href="src/scorecard/prompt/client.py">get_by_name</a>(...)</code></summary>
+## ScoringConfig
+<details><summary><code>client.scoring_config.<a href="src/scorecard/scoring_config/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1918,7 +2517,7 @@ client.prompt.update(
 <dl>
 <dd>
 
-Retrieve a prod prompt by name
+Create a new scoring config.
 </dd>
 </dl>
 </dd>
@@ -1938,8 +2537,10 @@ from scorecard import Scorecard
 client = Scorecard(
     api_key="YOUR_API_KEY",
 )
-client.prompt.get_by_name(
-    name="name",
+client.scoring_config.create(
+    name="Scoring Config Name",
+    description="Description of the scoring config",
+    metrics=[1, 2, 3],
 )
 
 ```
@@ -1956,7 +2557,93 @@ client.prompt.get_by_name(
 <dl>
 <dd>
 
-**name:** `str` — Name of the prompt.
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metrics:** `typing.Optional[typing.Sequence[int]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.scoring_config.<a href="src/scorecard/scoring_config/client.py">get</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a scoring config by id
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from scorecard import Scorecard
+
+client = Scorecard(
+    api_key="YOUR_API_KEY",
+)
+client.scoring_config.get(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The id of the scoring config to get.
     
 </dd>
 </dl>

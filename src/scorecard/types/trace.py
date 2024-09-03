@@ -3,14 +3,16 @@
 from ..core.unchecked_base_model import UncheckedBaseModel
 import pydantic
 import datetime as dt
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import typing
+from .span import Span
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class Trace(UncheckedBaseModel):
     trace_id: str = pydantic.Field(alias="TraceId")
     start: dt.datetime = pydantic.Field(alias="Start")
     end: dt.datetime = pydantic.Field(alias="End")
+    spans: typing.Optional[typing.List[Span]] = pydantic.Field(alias="Spans", default=None)
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -19,6 +19,9 @@ from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..types.testcase_deletion_response import TestcaseDeletionResponse
+from .types.testcase_update_params_custom_inputs_value import TestcaseUpdateParamsCustomInputsValue
+from .types.testcase_update_params_custom_labels_value import TestcaseUpdateParamsCustomLabelsValue
+from ..types.testcase_batch_deletion_response import TestcaseBatchDeletionResponse
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -285,6 +288,329 @@ class TestcaseClient:
                     TestcaseDeletionResponse,
                     construct_type(
                         type_=TestcaseDeletionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update(
+        self,
+        testcase_id: int,
+        testset_id: int,
+        *,
+        user_query: typing.Optional[str] = OMIT,
+        context: typing.Optional[str] = OMIT,
+        ideal: typing.Optional[str] = OMIT,
+        custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomInputsValue]]] = OMIT,
+        custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomLabelsValue]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestCase:
+        """
+        Update a Testcase.
+
+        Parameters
+        ----------
+        testcase_id : int
+            The ID of the Testcase to update.
+
+        testset_id : int
+            The ID of the Testset to retrieve the Testcase from.
+
+        user_query : typing.Optional[str]
+            The user query to be executed.
+
+        context : typing.Optional[str]
+            The context to be used while generating the testcase.
+
+        ideal : typing.Optional[str]
+            The ideal response to the user query.
+
+        custom_inputs : typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomInputsValue]]]
+
+        custom_labels : typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomLabelsValue]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestCase
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.update(
+            testcase_id=1,
+            testset_id=1,
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
+            method="PATCH",
+            json={
+                "user_query": user_query,
+                "context": context,
+                "ideal": ideal,
+                "custom_inputs": custom_inputs,
+                "custom_labels": custom_labels,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestCase,
+                    construct_type(
+                        type_=TestCase,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def batch_copy(
+        self,
+        testset_id: int,
+        *,
+        ids: typing.Optional[typing.Sequence[int]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestCase:
+        """
+        Batch copy Testcases
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset to create the Testcase in.
+
+        ids : typing.Optional[typing.Sequence[int]]
+            List of Testcase IDs to copy.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestCase
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.batch_copy(
+            testset_id=1,
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/batch_copy",
+            method="POST",
+            json={
+                "ids": ids,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestCase,
+                    construct_type(
+                        type_=TestCase,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def batch_delete(
+        self,
+        testset_id: int,
+        *,
+        ids: typing.Optional[typing.Sequence[int]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestcaseBatchDeletionResponse:
+        """
+        Batch delete Testcases
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset from which the Testcases will be deleted.
+
+        ids : typing.Optional[typing.Sequence[int]]
+            List of Testcase IDs to delete.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestcaseBatchDeletionResponse
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testcase.batch_delete(
+            testset_id=1,
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/batch_delete",
+            method="PATCH",
+            json={
+                "ids": ids,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestcaseBatchDeletionResponse,
+                    construct_type(
+                        type_=TestcaseBatchDeletionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -618,6 +944,353 @@ class AsyncTestcaseClient:
                     TestcaseDeletionResponse,
                     construct_type(
                         type_=TestcaseDeletionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update(
+        self,
+        testcase_id: int,
+        testset_id: int,
+        *,
+        user_query: typing.Optional[str] = OMIT,
+        context: typing.Optional[str] = OMIT,
+        ideal: typing.Optional[str] = OMIT,
+        custom_inputs: typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomInputsValue]]] = OMIT,
+        custom_labels: typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomLabelsValue]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestCase:
+        """
+        Update a Testcase.
+
+        Parameters
+        ----------
+        testcase_id : int
+            The ID of the Testcase to update.
+
+        testset_id : int
+            The ID of the Testset to retrieve the Testcase from.
+
+        user_query : typing.Optional[str]
+            The user query to be executed.
+
+        context : typing.Optional[str]
+            The context to be used while generating the testcase.
+
+        ideal : typing.Optional[str]
+            The ideal response to the user query.
+
+        custom_inputs : typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomInputsValue]]]
+
+        custom_labels : typing.Optional[typing.Dict[str, typing.Optional[TestcaseUpdateParamsCustomLabelsValue]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestCase
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from scorecard import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.testcase.update(
+                testcase_id=1,
+                testset_id=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/{jsonable_encoder(testcase_id)}",
+            method="PATCH",
+            json={
+                "user_query": user_query,
+                "context": context,
+                "ideal": ideal,
+                "custom_inputs": custom_inputs,
+                "custom_labels": custom_labels,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestCase,
+                    construct_type(
+                        type_=TestCase,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def batch_copy(
+        self,
+        testset_id: int,
+        *,
+        ids: typing.Optional[typing.Sequence[int]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestCase:
+        """
+        Batch copy Testcases
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset to create the Testcase in.
+
+        ids : typing.Optional[typing.Sequence[int]]
+            List of Testcase IDs to copy.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestCase
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from scorecard import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.testcase.batch_copy(
+                testset_id=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/batch_copy",
+            method="POST",
+            json={
+                "ids": ids,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestCase,
+                    construct_type(
+                        type_=TestCase,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def batch_delete(
+        self,
+        testset_id: int,
+        *,
+        ids: typing.Optional[typing.Sequence[int]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> TestcaseBatchDeletionResponse:
+        """
+        Batch delete Testcases
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset from which the Testcases will be deleted.
+
+        ids : typing.Optional[typing.Sequence[int]]
+            List of Testcase IDs to delete.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TestcaseBatchDeletionResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from scorecard import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.testcase.batch_delete(
+                testset_id=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}/testcase/batch_delete",
+            method="PATCH",
+            json={
+                "ids": ids,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    TestcaseBatchDeletionResponse,
+                    construct_type(
+                        type_=TestcaseBatchDeletionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

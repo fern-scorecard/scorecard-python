@@ -2,5 +2,12 @@
 
 from .testcase_create_params_custom_inputs_value import TestcaseCreateParamsCustomInputsValue
 from .testcase_create_params_custom_labels_value import TestcaseCreateParamsCustomLabelsValue
+from .testcase_update_params_custom_inputs_value import TestcaseUpdateParamsCustomInputsValue
+from .testcase_update_params_custom_labels_value import TestcaseUpdateParamsCustomLabelsValue
 
-__all__ = ["TestcaseCreateParamsCustomInputsValue", "TestcaseCreateParamsCustomLabelsValue"]
+__all__ = [
+    "TestcaseCreateParamsCustomInputsValue",
+    "TestcaseCreateParamsCustomLabelsValue",
+    "TestcaseUpdateParamsCustomInputsValue",
+    "TestcaseUpdateParamsCustomLabelsValue",
+]

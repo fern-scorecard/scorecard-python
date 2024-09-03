@@ -2,16 +2,20 @@
 
 from ..core.unchecked_base_model import UncheckedBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class TestCaseCreate(UncheckedBaseModel):
-    testset_id: int
-    user_query: str
-    context: typing.Optional[str] = None
-    response: typing.Optional[str] = None
-    ideal: typing.Optional[str] = None
+class TestcaseBatchDeletionResponse(UncheckedBaseModel):
+    ids: typing.List[int] = pydantic.Field()
+    """
+    The IDs of the testcases that were deleted.
+    """
+
+    detail: str = pydantic.Field()
+    """
+    The message indicating the testcases were deleted.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

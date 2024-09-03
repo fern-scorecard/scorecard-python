@@ -3,8 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.testrecord import Testrecord
-from ..core.jsonable_encoder import jsonable_encoder
+from ..types.scoring_config import ScoringConfig
 from ..core.unchecked_base_model import construct_type
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.unauthenticated_error import UnauthenticatedError
@@ -16,187 +15,42 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.http_validation_error import HttpValidationError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
-from .types.testrecord_create_params_custom_inputs_value import TestrecordCreateParamsCustomInputsValue
-from .types.testrecord_create_params_custom_outputs_value import TestrecordCreateParamsCustomOutputsValue
-from .types.testrecord_create_params_custom_labels_value import TestrecordCreateParamsCustomLabelsValue
-from .types.testrecord_create_params_model_params_value import TestrecordCreateParamsModelParamsValue
-from .types.testrecord_create_params_model_debug_info_value import TestrecordCreateParamsModelDebugInfoValue
+from ..core.jsonable_encoder import jsonable_encoder
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class TestrecordClient:
+class ScoringConfigClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get(
-        self, testrecord_id: int, run_id: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> Testrecord:
-        """
-        Retrieve Testrecord metadata
-
-        Parameters
-        ----------
-        testrecord_id : int
-
-        run_id : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        Testrecord
-            Successful Response
-
-        Examples
-        --------
-        from scorecard import Scorecard
-
-        client = Scorecard(
-            api_key="YOUR_API_KEY",
-        )
-        client.testrecord.get(
-            testrecord_id=1,
-            run_id=1,
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    Testrecord,
-                    construct_type(
-                        type_=Testrecord,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        UnauthenticatedError,
-                        construct_type(
-                            type_=UnauthenticatedError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        UnauthorizedErrorBody,
-                        construct_type(
-                            type_=UnauthorizedErrorBody,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        NotFoundErrorBody,
-                        construct_type(
-                            type_=NotFoundErrorBody,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    typing.cast(
-                        HttpValidationError,
-                        construct_type(
-                            type_=HttpValidationError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     def create(
         self,
-        run_id: int,
         *,
-        testset_id: typing.Optional[int] = OMIT,
-        testcase_id: typing.Optional[int] = OMIT,
-        user_query: typing.Optional[str] = OMIT,
-        context: typing.Optional[str] = OMIT,
-        response: typing.Optional[str] = OMIT,
-        ideal: typing.Optional[str] = OMIT,
-        custom_inputs: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomInputsValue]]
-        ] = OMIT,
-        custom_outputs: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]
-        ] = OMIT,
-        custom_labels: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]
-        ] = OMIT,
-        prompt: typing.Optional[str] = OMIT,
-        model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]] = OMIT,
-        model_debug_info: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]
-        ] = OMIT,
-        error_message: typing.Optional[str] = OMIT,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        metrics: typing.Optional[typing.Sequence[int]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> Testrecord:
+    ) -> ScoringConfig:
         """
-        Create a new Testrecord
+        Create a new scoring config.
 
         Parameters
         ----------
-        run_id : int
-            The ID of the Run to create the Testrecord in.
+        name : typing.Optional[str]
 
-        testset_id : typing.Optional[int]
+        description : typing.Optional[str]
 
-        testcase_id : typing.Optional[int]
-
-        user_query : typing.Optional[str]
-            The user query that was executed for the testrecord.
-
-        context : typing.Optional[str]
-            The context that was used while generating the testrecord.
-
-        response : typing.Optional[str]
-            The response generated by the model.
-
-        ideal : typing.Optional[str]
-            The ideal response.
-
-        custom_inputs : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomInputsValue]]]
-
-        custom_outputs : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]]
-
-        custom_labels : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]]
-
-        prompt : typing.Optional[str]
-            The prompt used to generate the response.
-
-        model_params : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]]
-            The model parameters used to generate the response.
-
-        model_debug_info : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]]
-            Debug information generated by Scorecard during the execution of the testrecord.
-
-        error_message : typing.Optional[str]
-            The error message for the testrecord.
+        metrics : typing.Optional[typing.Sequence[int]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        Testrecord
+        ScoringConfig
             Successful Response
 
         Examples
@@ -206,27 +60,19 @@ class TestrecordClient:
         client = Scorecard(
             api_key="YOUR_API_KEY",
         )
-        client.testrecord.create(
-            run_id=1,
+        client.scoring_config.create(
+            name="Scoring Config Name",
+            description="Description of the scoring config",
+            metrics=[1, 2, 3],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"v1/run/{jsonable_encoder(run_id)}/testrecord",
+            "v1/scoring_config",
             method="POST",
             json={
-                "testset_id": testset_id,
-                "testcase_id": testcase_id,
-                "user_query": user_query,
-                "context": context,
-                "response": response,
-                "ideal": ideal,
-                "custom_inputs": custom_inputs,
-                "custom_outputs": custom_outputs,
-                "custom_labels": custom_labels,
-                "prompt": prompt,
-                "model_params": model_params,
-                "model_debug_info": model_debug_info,
-                "error_message": error_message,
+                "name": name,
+                "description": description,
+                "metrics": metrics,
             },
             request_options=request_options,
             omit=OMIT,
@@ -234,9 +80,96 @@ class TestrecordClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    Testrecord,
+                    ScoringConfig,
                     construct_type(
-                        type_=Testrecord,  # type: ignore
+                        type_=ScoringConfig,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ScoringConfig:
+        """
+        Retrieve a scoring config by id
+
+        Parameters
+        ----------
+        id : str
+            The id of the scoring config to get.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ScoringConfig
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.scoring_config.get(
+            id="id",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"v1/scoring_config/{jsonable_encoder(id)}",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ScoringConfig,
+                    construct_type(
+                        type_=ScoringConfig,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -286,28 +219,35 @@ class TestrecordClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncTestrecordClient:
+class AsyncScoringConfigClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get(
-        self, testrecord_id: int, run_id: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> Testrecord:
+    async def create(
+        self,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        metrics: typing.Optional[typing.Sequence[int]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ScoringConfig:
         """
-        Retrieve Testrecord metadata
+        Create a new scoring config.
 
         Parameters
         ----------
-        testrecord_id : int
+        name : typing.Optional[str]
 
-        run_id : int
+        description : typing.Optional[str]
+
+        metrics : typing.Optional[typing.Sequence[int]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        Testrecord
+        ScoringConfig
             Successful Response
 
         Examples
@@ -322,25 +262,32 @@ class AsyncTestrecordClient:
 
 
         async def main() -> None:
-            await client.testrecord.get(
-                testrecord_id=1,
-                run_id=1,
+            await client.scoring_config.create(
+                name="Scoring Config Name",
+                description="Description of the scoring config",
+                metrics=[1, 2, 3],
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"v1/run/{jsonable_encoder(run_id)}/testrecord/{jsonable_encoder(testrecord_id)}",
-            method="GET",
+            "v1/scoring_config",
+            method="POST",
+            json={
+                "name": name,
+                "description": description,
+                "metrics": metrics,
+            },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    Testrecord,
+                    ScoringConfig,
                     construct_type(
-                        type_=Testrecord,  # type: ignore
+                        type_=ScoringConfig,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -389,81 +336,21 @@ class AsyncTestrecordClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def create(
-        self,
-        run_id: int,
-        *,
-        testset_id: typing.Optional[int] = OMIT,
-        testcase_id: typing.Optional[int] = OMIT,
-        user_query: typing.Optional[str] = OMIT,
-        context: typing.Optional[str] = OMIT,
-        response: typing.Optional[str] = OMIT,
-        ideal: typing.Optional[str] = OMIT,
-        custom_inputs: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomInputsValue]]
-        ] = OMIT,
-        custom_outputs: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]
-        ] = OMIT,
-        custom_labels: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]
-        ] = OMIT,
-        prompt: typing.Optional[str] = OMIT,
-        model_params: typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]] = OMIT,
-        model_debug_info: typing.Optional[
-            typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]
-        ] = OMIT,
-        error_message: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> Testrecord:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ScoringConfig:
         """
-        Create a new Testrecord
+        Retrieve a scoring config by id
 
         Parameters
         ----------
-        run_id : int
-            The ID of the Run to create the Testrecord in.
-
-        testset_id : typing.Optional[int]
-
-        testcase_id : typing.Optional[int]
-
-        user_query : typing.Optional[str]
-            The user query that was executed for the testrecord.
-
-        context : typing.Optional[str]
-            The context that was used while generating the testrecord.
-
-        response : typing.Optional[str]
-            The response generated by the model.
-
-        ideal : typing.Optional[str]
-            The ideal response.
-
-        custom_inputs : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomInputsValue]]]
-
-        custom_outputs : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomOutputsValue]]]
-
-        custom_labels : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsCustomLabelsValue]]]
-
-        prompt : typing.Optional[str]
-            The prompt used to generate the response.
-
-        model_params : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelParamsValue]]]
-            The model parameters used to generate the response.
-
-        model_debug_info : typing.Optional[typing.Dict[str, typing.Optional[TestrecordCreateParamsModelDebugInfoValue]]]
-            Debug information generated by Scorecard during the execution of the testrecord.
-
-        error_message : typing.Optional[str]
-            The error message for the testrecord.
+        id : str
+            The id of the scoring config to get.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        Testrecord
+        ScoringConfig
             Successful Response
 
         Examples
@@ -478,40 +365,24 @@ class AsyncTestrecordClient:
 
 
         async def main() -> None:
-            await client.testrecord.create(
-                run_id=1,
+            await client.scoring_config.get(
+                id="id",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"v1/run/{jsonable_encoder(run_id)}/testrecord",
-            method="POST",
-            json={
-                "testset_id": testset_id,
-                "testcase_id": testcase_id,
-                "user_query": user_query,
-                "context": context,
-                "response": response,
-                "ideal": ideal,
-                "custom_inputs": custom_inputs,
-                "custom_outputs": custom_outputs,
-                "custom_labels": custom_labels,
-                "prompt": prompt,
-                "model_params": model_params,
-                "model_debug_info": model_debug_info,
-                "error_message": error_message,
-            },
+            f"v1/scoring_config/{jsonable_encoder(id)}",
+            method="GET",
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    Testrecord,
+                    ScoringConfig,
                     construct_type(
-                        type_=Testrecord,  # type: ignore
+                        type_=ScoringConfig,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

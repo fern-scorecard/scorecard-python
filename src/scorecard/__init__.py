@@ -21,13 +21,14 @@ from .types import (
     RunMetric,
     RunStatus,
     ScoreStatus,
+    ScoringConfig,
     Span,
     TestCase,
-    TestCaseCreate,
     TestCaseCustomInputsValue,
     TestCaseCustomLabelsValue,
     TestRecordCreate,
     TestSetCreate,
+    TestcaseBatchDeletionResponse,
     TestcaseDeletionResponse,
     Testrecord,
     TestrecordCustomInputsValue,
@@ -43,11 +44,16 @@ from .types import (
     ValidationErrorLocItem,
 )
 from .errors import ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableEntityError
-from . import prompt, run, run_metric, score, testcase, testrecord, testset, traces
+from . import prompt, run, run_metric, score, scoring_config, testcase, testrecord, testset, tracing
 from .client import AsyncScorecard, Scorecard
 from .environment import ScorecardEnvironment
 from .prompt import PromptCreateParamsModelParamsValue
-from .testcase import TestcaseCreateParamsCustomInputsValue, TestcaseCreateParamsCustomLabelsValue
+from .testcase import (
+    TestcaseCreateParamsCustomInputsValue,
+    TestcaseCreateParamsCustomLabelsValue,
+    TestcaseUpdateParamsCustomInputsValue,
+    TestcaseUpdateParamsCustomLabelsValue,
+)
 from .testrecord import (
     TestrecordCreateParamsCustomInputsValue,
     TestrecordCreateParamsCustomLabelsValue,
@@ -84,16 +90,19 @@ __all__ = [
     "ScoreStatus",
     "Scorecard",
     "ScorecardEnvironment",
+    "ScoringConfig",
     "Span",
     "TestCase",
-    "TestCaseCreate",
     "TestCaseCustomInputsValue",
     "TestCaseCustomLabelsValue",
     "TestRecordCreate",
     "TestSetCreate",
+    "TestcaseBatchDeletionResponse",
     "TestcaseCreateParamsCustomInputsValue",
     "TestcaseCreateParamsCustomLabelsValue",
     "TestcaseDeletionResponse",
+    "TestcaseUpdateParamsCustomInputsValue",
+    "TestcaseUpdateParamsCustomLabelsValue",
     "Testrecord",
     "TestrecordCreateParamsCustomInputsValue",
     "TestrecordCreateParamsCustomLabelsValue",
@@ -118,8 +127,9 @@ __all__ = [
     "run",
     "run_metric",
     "score",
+    "scoring_config",
     "testcase",
     "testrecord",
     "testset",
-    "traces",
+    "tracing",
 ]

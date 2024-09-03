@@ -202,6 +202,119 @@ class TestsetClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
+    def update(
+        self,
+        testset_id: int,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        using_retrieval: typing.Optional[bool] = OMIT,
+        custom_schema: typing.Optional[CustomSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Testset:
+        """
+        Update a Testset.
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset to update.
+
+        name : typing.Optional[str]
+
+        description : typing.Optional[str]
+            A description for the testset.
+
+        using_retrieval : typing.Optional[bool]
+            Whether or not the testset uses retrieval.
+
+        custom_schema : typing.Optional[CustomSchema]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Testset
+            Successful Response
+
+        Examples
+        --------
+        from scorecard import Scorecard
+
+        client = Scorecard(
+            api_key="YOUR_API_KEY",
+        )
+        client.testset.update(
+            testset_id=1,
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}",
+            method="PATCH",
+            json={
+                "name": name,
+                "description": description,
+                "using_retrieval": using_retrieval,
+                "custom_schema": custom_schema,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    Testset,
+                    construct_type(
+                        type_=Testset,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     def create(
         self,
         *,
@@ -642,6 +755,127 @@ class AsyncTestsetClient:
             f"v1/testset/{jsonable_encoder(testset_id)}",
             method="DELETE",
             request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    Testset,
+                    construct_type(
+                        type_=Testset,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        UnauthenticatedError,
+                        construct_type(
+                            type_=UnauthenticatedError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        UnauthorizedErrorBody,
+                        construct_type(
+                            type_=UnauthorizedErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        NotFoundErrorBody,
+                        construct_type(
+                            type_=NotFoundErrorBody,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        HttpValidationError,
+                        construct_type(
+                            type_=HttpValidationError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update(
+        self,
+        testset_id: int,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        using_retrieval: typing.Optional[bool] = OMIT,
+        custom_schema: typing.Optional[CustomSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Testset:
+        """
+        Update a Testset.
+
+        Parameters
+        ----------
+        testset_id : int
+            The ID of the Testset to update.
+
+        name : typing.Optional[str]
+
+        description : typing.Optional[str]
+            A description for the testset.
+
+        using_retrieval : typing.Optional[bool]
+            Whether or not the testset uses retrieval.
+
+        custom_schema : typing.Optional[CustomSchema]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Testset
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from scorecard import AsyncScorecard
+
+        client = AsyncScorecard(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.testset.update(
+                testset_id=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"v1/testset/{jsonable_encoder(testset_id)}",
+            method="PATCH",
+            json={
+                "name": name,
+                "description": description,
+                "using_retrieval": using_retrieval,
+                "custom_schema": custom_schema,
+            },
+            request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
